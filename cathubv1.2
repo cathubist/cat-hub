@@ -5,7 +5,1278 @@ local MSection = main:NewSection("Info")
 MSection:NewLabel("made by baskesotanin#5933")
 
 
-local main3 = Window:NewTab("Fun scripts")
+local utilitymain = Window:NewTab("Utilities")
+local utilitysection = utilitymain:NewSection("Useful scripts")
+
+utilitysection:NewButton("Net bypass", "funny net bypass", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/cathubist/phantomhm/main/netbypass',true))()
+end)
+
+utilitysection:NewButton("BTools", "b tools yes yes", function()
+    local tool1 = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+ local tool2 = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+ local tool3 = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+ local tool4 = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+ local tool5 = Instance.new("HopperBin", game.Players.LocalPlayer.Backpack)
+ tool1.BinType = "Clone"
+ tool2.BinType = "GameTool"
+ tool3.BinType = "Hammer"
+ tool4.BinType = "Script"
+ tool5.BinType = "Grab"
+
+end)
+
+local utilitygui = utilitymain:NewSection("GUI")
+
+utilitygui:NewButton("2016 Roblox GUI", "fire", function()
+    if game:IsLoaded() ~= true then
+        game.Loaded:Wait()
+    end
+    --Needed for nostalgia, Filtering Disabled spoof
+    local Workspace = game.Workspace
+    local old
+    old =
+        hookmetamethod(
+        game,
+        "__index",
+        newcclosure(
+            function(Self, ...)
+                local args = ...
+                if Self == Workspace and args == "FilteringEnabled" then
+                    return false
+                end
+                return old(Self, ...)
+            end
+        )
+    )
+    
+    --Script utils
+    oldrequire = require
+    getgenv().bakrequire = require
+    
+    cache = {}
+    
+    function IsCached(Inst)
+        for i, v in next, cache do
+            if v[1] == Inst then
+                return true, v[2]
+            end
+        end
+        return false
+    end
+    
+    getgenv().require = function(inst)
+        CachedStatus, Result = IsCached(inst)
+        if CachedStatus == false and Result == nil then
+            result = loadstring(inst.Source)()
+            table.insert(cache, {inst, result})
+            return result
+        else
+            if Result then
+                return Result
+            end
+        end
+    end
+    
+    getgenv().LoadLibrary = function(str)
+        return loadstring(game:GetObjects("rbxassetid://9133787982")[1][str].Source)()
+    end
+    
+    --Delete CoreGui guis
+    function ExistAndDelete(str)
+        task.spawn(
+            function()
+                if game:GetService("CoreGui"):FindFirstChild(str) == nil then
+                    game:GetService("CoreGui"):WaitForChild(str):Destroy()
+                else
+                    game:GetService("CoreGui")[str]:Destroy()
+                end
+            end
+        )
+    end
+    
+    ExistAndDelete("RobloxGui")
+    ExistAndDelete("TeleportGui")
+    ExistAndDelete("RobloxPromptGui")
+    ExistAndDelete("RobloxLoadingGui")
+    ExistAndDelete("PlayerList")
+    ExistAndDelete("RobloxNetworkPauseNotification")
+    ExistAndDelete("PurchasePrompt")
+    ExistAndDelete("HeadsetDisconnectedDialog")
+    ExistAndDelete("ThemeProvider")
+    ExistAndDelete("BubbleChat")
+    
+    --Adios all CoreScript!!!
+    for i, v in pairs(game:GetDescendants()) do
+        if v.ClassName == "CoreScript" then
+            v:Destroy()
+        end
+    end
+    
+    --Chat handler (soo people can see your messages) (YOU CAN EDIT THIS IF THE GAME YOUR PLAYING HAVE A CUSTOM CHAT)
+    game.Players.LocalPlayer.Chatted:Connect(
+        function(msg)
+            if game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents") ~= nil then
+                if
+                    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest") ~=
+                        nil
+                 then
+                    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest"):FireServer(
+                        msg,
+                        "All"
+                    )
+                end
+            end
+        end
+    )
+    
+    --Delete Chat if found
+    if game.Players.LocalPlayer:FindFirstChild("PlayerGui") == nil then
+        game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    end
+    
+    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("Chat") == nil then
+        game.Players.LocalPlayer.PlayerGui:WaitForChild("Chat"):Destroy()
+    else
+        game.Players.LocalPlayer.PlayerGui["Chat"]:Destroy()
+    end
+    
+    --The Health bar always on
+    game.Players.PlayerAdded:Connect(
+        function(plr)
+            task.spawn(
+                function()
+                    if plr ~= nil then
+                        if plr.Character == nil then
+                            plr.CharacterAdded:Wait()
+                        end
+                        if plr.Character:FindFirstChild("Humanoid") == nil then
+                            plr.Character:WaitForChild("Humanoid")
+                        end
+                        plr.Character.Humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+                    end
+                    plr.CharacterAdded:Connect(
+                        function(charac)
+                            if charac:FindFirstChild("Humanoid") == nil then
+                                charac:WaitForChild("Humanoid")
+                            end
+                            charac.Humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+                        end
+                    )
+                end
+            )
+        end
+    )
+    
+    task.spawn(
+        function()
+            while true do
+                task.wait(.1)
+                for i, v in pairs(game.Players:GetChildren()) do
+                    if v.Character ~= nil then
+                        if v.Character:FindFirstChild("Humanoid") then
+                            sethiddenproperty(
+                                v.Character.Humanoid,
+                                "HealthDisplayType",
+                                Enum.HumanoidHealthDisplayType.AlwaysOn
+                            )
+                        end
+                    end
+                end
+            end
+        end
+    )
+    
+    --Funny gui
+    local RobloxGui = game:GetObjects("rbxassetid://9139773381")[1]
+    RobloxGui.Parent = game:GetService("CoreGui")
+    
+    --Remove kick blur
+    task.spawn(
+        function()
+            while true do
+                task.wait()
+                game:GetService("RunService"):SetRobloxGuiFocused(false)
+            end
+        end
+    )
+    
+    --Scripts both taken from a real 2016 roblox studio
+    --They do the joining stuff etc
+    task.spawn(
+        function()
+            -- Creates the generic "ROBLOX" loading screen on startup
+            -- Written by ArceusInator & Ben Tkacheff, 2014
+            --
+    
+            -- Constants
+            local PLACEID = game.PlaceId
+    
+            local MPS = game:GetService("MarketplaceService")
+            local UIS = game:GetService("UserInputService")
+            local guiService = game:GetService("GuiService")
+            local ContextActionService = game:GetService("ContextActionService")
+            local RobloxGui = game:GetService("CoreGui"):WaitForChild("RobloxGui")
+    
+            local startTime = tick()
+    
+            local COLORS = {
+                BLACK = Color3.new(0, 0, 0),
+                BACKGROUND_COLOR = Color3.new(45 / 255, 45 / 255, 45 / 255),
+                WHITE = Color3.new(1, 1, 1),
+                ERROR = Color3.new(253 / 255, 68 / 255, 72 / 255)
+            }
+    
+            local function getViewportSize()
+                while not game.Workspace.CurrentCamera do
+                    game.Workspace.Changed:wait()
+                end
+    
+                while game.Workspace.CurrentCamera.ViewportSize == Vector2.new(0, 0) do
+                    game.Workspace.CurrentCamera.Changed:wait()
+                end
+    
+                return game.Workspace.CurrentCamera.ViewportSize
+            end
+    
+            --
+            -- Variables
+            local GameAssetInfo  -- loaded by InfoProvider:LoadAssets()
+            local currScreenGui, renderSteppedConnection = nil, nil
+            local destroyingBackground, destroyedLoadingGui, hasReplicatedFirstElements = false, false, false
+            local backgroundImageTransparency = 0
+            local isMobile = (UIS.TouchEnabled == true and UIS.MouseEnabled == false and getViewportSize().Y <= 500)
+            local isTenFootInterface = guiService:IsTenFootInterface()
+            local platform = UIS:GetPlatform()
+    
+            local function IsConvertMyPlaceNameInXboxAppEnabled()
+                if UIS:GetPlatform() == Enum.Platform.XBoxOne then
+                    local success, flagValue =
+                        pcall(
+                        function()
+                            return settings():GetFFlag("ConvertMyPlaceNameInXboxApp")
+                        end
+                    )
+                    return (success and flagValue == true)
+                end
+                return false
+            end
+    
+            --
+            -- Utility functions
+            local create = function(className, defaultParent)
+                return function(propertyList)
+                    local object = Instance.new(className)
+                    local parent = nil
+    
+                    for index, value in next, propertyList do
+                        if type(index) == "string" then
+                            if index == "Parent" then
+                                parent = value
+                            else
+                                object[index] = value
+                            end
+                        else
+                            if type(value) == "function" then
+                                value(object)
+                            elseif type(value) == "userdata" then
+                                value.Parent = object
+                            end
+                        end
+                    end
+    
+                    if parent then
+                        object.Parent = parent
+                    end
+    
+                    if object.Parent == nil then
+                        object.Parent = defaultParent
+                    end
+    
+                    return object
+                end
+            end
+    
+            --
+            -- Create objects
+    
+            local MainGui = {}
+            local InfoProvider = {}
+    
+            function ExtractGeneratedUsername(gameName)
+                local tempUsername = string.match(gameName, "^([0-9a-fA-F]+)'s Place$")
+                if tempUsername and #tempUsername == 32 then
+                    return tempUsername
+                end
+            end
+    
+            -- Fix places that have been made with incorrect temporary usernames
+            function GetFilteredGameName(gameName, creatorName)
+                if gameName and type(gameName) == "string" then
+                    local tempUsername = ExtractGeneratedUsername(gameName)
+                    if tempUsername then
+                        local newGameName = string.gsub(gameName, tempUsername, creatorName, 1)
+                        if newGameName then
+                            return newGameName
+                        end
+                    end
+                end
+                return gameName
+            end
+    
+            function InfoProvider:GetGameName()
+                if GameAssetInfo ~= nil then
+                    if IsConvertMyPlaceNameInXboxAppEnabled() then
+                        return GetFilteredGameName(GameAssetInfo.Name, self:GetCreatorName())
+                    else
+                        return GameAssetInfo.Name
+                    end
+                else
+                    return ""
+                end
+            end
+    
+            function InfoProvider:GetCreatorName()
+                if GameAssetInfo ~= nil then
+                    return GameAssetInfo.Creator.Name
+                else
+                    return ""
+                end
+            end
+    
+            function InfoProvider:LoadAssets()
+                task.spawn(
+                    function()
+                        if PLACEID <= 0 then
+                            while game.PlaceId <= 0 do
+                                wait()
+                            end
+                            PLACEID = game.PlaceId
+                        end
+    
+                        -- load game asset info
+                        coroutine.resume(
+                            coroutine.create(
+                                function()
+                                    local success, result =
+                                        pcall(
+                                        function()
+                                            GameAssetInfo = MPS:GetProductInfo(PLACEID)
+                                        end
+                                    )
+                                    if not success then
+                                        print("LoadingScript->InfoProvider:LoadAssets:", result)
+                                    end
+                                end
+                            )
+                        )
+                    end
+                )
+            end
+    
+            function MainGui:tileBackgroundTexture(frameToFill)
+                if not frameToFill then
+                    return
+                end
+                frameToFill:ClearAllChildren()
+                if backgroundImageTransparency < 1 then
+                    local backgroundTextureSize = Vector2.new(512, 512)
+                    for i = 0, math.ceil(frameToFill.AbsoluteSize.X / backgroundTextureSize.X) do
+                        for j = 0, math.ceil(frameToFill.AbsoluteSize.Y / backgroundTextureSize.Y) do
+                            create "ImageLabel" {
+                                Name = "BackgroundTextureImage",
+                                BackgroundTransparency = 1,
+                                ImageTransparency = backgroundImageTransparency,
+                                Image = "rbxasset://textures/loading/darkLoadingTexture.png",
+                                Position = UDim2.new(0, i * backgroundTextureSize.X, 0, j * backgroundTextureSize.Y),
+                                Size = UDim2.new(0, backgroundTextureSize.X, 0, backgroundTextureSize.Y),
+                                ZIndex = 1,
+                                Parent = frameToFill
+                            }
+                        end
+                    end
+                end
+            end
+    
+            -- create a cancel binding for console to be able to cancel anytime while loading
+            local function createTenfootCancelGui()
+                local cancelLabel =
+                    create "ImageLabel" {
+                    Name = "CancelLabel",
+                    Size = UDim2.new(0, 83, 0, 83),
+                    Position = UDim2.new(1, -32 - 83, 0, 32),
+                    BackgroundTransparency = 1,
+                    Image = "rbxasset://textures/ui/Shell/ButtonIcons/BButton.png"
+                }
+                local cancelText =
+                    create "TextLabel" {
+                    Name = "CancelText",
+                    Size = UDim2.new(0, 0, 0, 0),
+                    Position = UDim2.new(1, -131, 0, 64),
+                    BackgroundTransparency = 1,
+                    FontSize = Enum.FontSize.Size36,
+                    TextXAlignment = Enum.TextXAlignment.Right,
+                    TextColor3 = COLORS.WHITE,
+                    Text = "Cancel"
+                }
+    
+                -- bind cancel action
+                local platformService = nil
+                pcall(
+                    function()
+                        platformService = game:GetService("PlatformService")
+                    end
+                )
+    
+                if platformService then
+                    if not game:GetService("ReplicatedFirst"):IsFinishedReplicating() then
+                        local seenBButtonBegin = false
+                        ContextActionService:BindCoreAction(
+                            "CancelGameLoad",
+                            function(actionName, inputState, inputObject)
+                                if inputState == Enum.UserInputState.Begin then
+                                    seenBButtonBegin = true
+                                elseif inputState == Enum.UserInputState.End and seenBButtonBegin then
+                                    cancelLabel:Destroy()
+                                    cancelText.Text = "Canceling..."
+                                    cancelText.Position = UDim2.new(1, -32, 0, 64)
+                                    ContextActionService:UnbindCoreAction("CancelGameLoad")
+                                    platformService:RequestGameShutdown()
+                                end
+                            end,
+                            false,
+                            Enum.KeyCode.ButtonB
+                        )
+                    end
+                end
+    
+                while cancelLabel.Parent == nil do
+                    if currScreenGui then
+                        local blackFrame = currScreenGui:FindFirstChild("BlackFrame")
+                        if blackFrame then
+                            cancelLabel.Parent = blackFrame
+                            cancelText.Parent = blackFrame
+                            break
+                        end
+                    end
+                    wait()
+                end
+            end
+    
+            --
+            -- Declare member functions
+            function MainGui:GenerateMain()
+                local screenGui =
+                    create "ScreenGui" {
+                    Name = "RobloxLoadingGui"
+                }
+    
+                --
+                -- create descendant frames
+                local mainBackgroundContainer =
+                    create "Frame" {
+                    Name = "BlackFrame",
+                    BackgroundColor3 = COLORS.BACKGROUND_COLOR,
+                    BackgroundTransparency = 0,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    Active = true,
+                    Parent = screenGui
+                }
+    
+                local closeButton =
+                    create "ImageButton" {
+                    Name = "CloseButton",
+                    Image = "rbxasset://textures/loading/cancelButton.png",
+                    ImageTransparency = 1,
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(1, -37, 0, 5),
+                    Size = UDim2.new(0, 32, 0, 32),
+                    Active = false,
+                    ZIndex = 10,
+                    Parent = mainBackgroundContainer
+                }
+    
+                local graphicsFrame =
+                    create "Frame" {
+                    Name = "GraphicsFrame",
+                    BorderSizePixel = 0,
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(
+                        1,
+                        (isMobile == true and -75 or (isTenFootInterface and -245 or -225)),
+                        1,
+                        (isMobile == true and -75 or (isTenFootInterface and -185 or -165))
+                    ),
+                    Size = UDim2.new(
+                        0,
+                        (isMobile == true and 70 or (isTenFootInterface and 140 or 120)),
+                        0,
+                        (isMobile == true and 70 or (isTenFootInterface and 140 or 120))
+                    ),
+                    ZIndex = 2,
+                    Parent = mainBackgroundContainer
+                }
+    
+                local loadingImage =
+                    create "ImageLabel" {
+                    Name = "LoadingImage",
+                    BackgroundTransparency = 1,
+                    Image = "rbxasset://textures/loading/loadingCircle.png",
+                    Position = UDim2.new(0, 0, 0, 0),
+                    Size = UDim2.new(1, 0, 1, 0),
+                    ZIndex = 2,
+                    Parent = graphicsFrame
+                }
+    
+                local loadingText =
+                    create "TextLabel" {
+                    Name = "LoadingText",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, (isMobile == true and -14 or -56), 1, 0),
+                    Position = UDim2.new(0, (isMobile == true and 12 or 28), 0, 0),
+                    Font = Enum.Font.SourceSans,
+                    FontSize = (isMobile == true and Enum.FontSize.Size12 or Enum.FontSize.Size18),
+                    TextWrapped = true,
+                    TextColor3 = COLORS.WHITE,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Visible = not isTenFootInterface,
+                    Text = "Loading...",
+                    ZIndex = 2,
+                    Parent = graphicsFrame
+                }
+    
+                local uiMessageFrame =
+                    create "Frame" {
+                    Name = "UiMessageFrame",
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0.25, 0, 1, -120),
+                    Size = UDim2.new(0.5, 0, 0, 80),
+                    ZIndex = 2,
+                    Parent = mainBackgroundContainer
+                }
+    
+                local uiMessage =
+                    create "TextLabel" {
+                    Name = "UiMessage",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Font = Enum.Font.SourceSansBold,
+                    FontSize = Enum.FontSize.Size18,
+                    TextWrapped = true,
+                    TextColor3 = COLORS.WHITE,
+                    Text = "",
+                    ZIndex = 2,
+                    Parent = uiMessageFrame
+                }
+    
+                local infoFrame =
+                    create "Frame" {
+                    Name = "InfoFrame",
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0, (isMobile == true and 20 or 100), 1, (isMobile == true and -120 or -150)),
+                    Size = UDim2.new(0.4, 0, 0, 110),
+                    ZIndex = 2,
+                    Parent = mainBackgroundContainer
+                }
+    
+                local placeLabel =
+                    create "TextLabel" {
+                    Name = "PlaceLabel",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 0, 80),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    Font = Enum.Font.SourceSans,
+                    FontSize = (isTenFootInterface and Enum.FontSize.Size48 or Enum.FontSize.Size24),
+                    TextWrapped = true,
+                    TextScaled = true,
+                    TextColor3 = COLORS.WHITE,
+                    TextStrokeTransparency = 0,
+                    Text = "",
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    TextYAlignment = Enum.TextYAlignment.Bottom,
+                    ZIndex = 2,
+                    Parent = infoFrame
+                }
+    
+                if isTenFootInterface then
+                    local byLabel =
+                        create "TextLabel" {
+                        Name = "ByLabel",
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(0, 36, 0, 30),
+                        Position = UDim2.new(0, 0, 0, 80),
+                        Font = Enum.Font.SourceSans,
+                        FontSize = Enum.FontSize.Size36,
+                        TextScaled = true,
+                        TextColor3 = COLORS.WHITE,
+                        TextStrokeTransparency = 0,
+                        Text = "By",
+                        TextXAlignment = Enum.TextXAlignment.Left,
+                        TextYAlignment = Enum.TextYAlignment.Top,
+                        ZIndex = 2,
+                        Visible = false,
+                        Parent = infoFrame
+                    }
+                    local creatorIcon =
+                        create "ImageLabel" {
+                        Name = "CreatorIcon",
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(0, 30, 0, 30),
+                        Position = UDim2.new(0, 38, 0, 80),
+                        ImageTransparency = 0,
+                        Image = "rbxasset://textures/ui/Shell/Icons/RobloxIcon32.png",
+                        ZIndex = 2,
+                        Visible = false,
+                        Parent = infoFrame
+                    }
+                end
+    
+                local creatorLabel =
+                    create "TextLabel" {
+                    Name = "CreatorLabel",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 0, 30),
+                    Position = UDim2.new(0, isTenFootInterface and 72 or 0, 0, 80),
+                    Font = Enum.Font.SourceSans,
+                    FontSize = (isTenFootInterface and Enum.FontSize.Size36 or Enum.FontSize.Size18),
+                    TextWrapped = true,
+                    TextScaled = true,
+                    TextColor3 = COLORS.WHITE,
+                    TextStrokeTransparency = 0,
+                    Text = "",
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    TextYAlignment = Enum.TextYAlignment.Top,
+                    ZIndex = 2,
+                    Parent = infoFrame
+                }
+    
+                local backgroundTextureFrame =
+                    create "Frame" {
+                    Name = "BackgroundTextureFrame",
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    ClipsDescendants = true,
+                    ZIndex = 1,
+                    BackgroundTransparency = 1,
+                    Parent = mainBackgroundContainer
+                }
+    
+                local errorFrame =
+                    create "Frame" {
+                    Name = "ErrorFrame",
+                    BackgroundColor3 = COLORS.ERROR,
+                    BorderSizePixel = 0,
+                    Position = UDim2.new(0.25, 0, 0, 0),
+                    Size = UDim2.new(0.5, 0, 0, 80),
+                    ZIndex = 8,
+                    Visible = false,
+                    Parent = screenGui
+                }
+    
+                local errorText =
+                    create "TextLabel" {
+                    Name = "ErrorText",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Font = Enum.Font.SourceSansBold,
+                    FontSize = Enum.FontSize.Size14,
+                    TextWrapped = true,
+                    TextColor3 = COLORS.WHITE,
+                    Text = "",
+                    ZIndex = 8,
+                    Parent = errorFrame
+                }
+    
+                while not game:GetService("CoreGui") do
+                    wait()
+                end
+                screenGui.Parent = game:GetService("CoreGui")
+                currScreenGui = screenGui
+            end
+    
+            function round(num, idp)
+                local mult = 10 ^ (idp or 0)
+                return math.floor(num * mult + 0.5) / mult
+            end
+    
+            ---------------------------------------------------------
+            -- Main Script (show something now + setup connections)
+    
+            -- start loading assets asap
+            InfoProvider:LoadAssets()
+            MainGui:GenerateMain()
+            if isTenFootInterface then
+                createTenfootCancelGui()
+            end
+    
+            local setVerb = true
+            local lastRenderTime, lastDotUpdateTime, brickCountChange = nil, nil, nil
+            local fadeCycleTime = 1.7
+            local turnCycleTime = 2
+            local lastAbsoluteSize = Vector2.new(0, 0)
+            local loadingDots = "..."
+            local dotChangeTime = .2
+            local lastBrickCount = 0
+    
+            renderSteppedConnection =
+                game:GetService("RunService").RenderStepped:connect(
+                function()
+                    if not currScreenGui then
+                        return
+                    end
+                    if not currScreenGui:FindFirstChild("BlackFrame") then
+                        return
+                    end
+    
+                    if setVerb then
+                        setVerb = false
+                    end
+    
+                    if
+                        currScreenGui.BlackFrame:FindFirstChild("BackgroundTextureFrame") and
+                            currScreenGui.BlackFrame.BackgroundTextureFrame.AbsoluteSize ~= lastAbsoluteSize
+                     then
+                        lastAbsoluteSize = currScreenGui.BlackFrame.BackgroundTextureFrame.AbsoluteSize
+                        MainGui:tileBackgroundTexture(currScreenGui.BlackFrame.BackgroundTextureFrame)
+                    end
+    
+                    local infoFrame = currScreenGui.BlackFrame:FindFirstChild("InfoFrame")
+                    if infoFrame then
+                        -- set place name
+                        local placeLabel = infoFrame:FindFirstChild("PlaceLabel")
+                        if placeLabel and placeLabel.Text == "" then
+                            placeLabel.Text = InfoProvider:GetGameName()
+                        end
+    
+                        -- set creator name
+                        local creatorLabel = infoFrame:FindFirstChild("CreatorLabel")
+                        if creatorLabel and creatorLabel.Text == "" then
+                            local creatorName = InfoProvider:GetCreatorName()
+                            if creatorName ~= "" then
+                                if isTenFootInterface then
+                                    local showDevName = true
+                                    if platform == Enum.Platform.XBoxOne then
+                                        local success, result =
+                                            pcall(
+                                            function()
+                                                return settings():GetFFlag("ShowDevNameInXboxApp")
+                                            end
+                                        )
+                                        if success then
+                                            showDevName = result
+                                        end
+                                    end
+                                    creatorLabel.Text = showDevName and creatorName or ""
+                                    local creatorIcon = infoFrame:FindFirstChild("CreatorIcon")
+                                    local byLabel = infoFrame:FindFirstChild("ByLabel")
+                                    if creatorIcon then
+                                        creatorIcon.Visible = showDevName
+                                    end
+                                    if byLabel then
+                                        byLabel.Visible = showDevName
+                                    end
+                                else
+                                    creatorLabel.Text = "By " .. creatorName
+                                end
+                            end
+                        end
+                    end
+    
+                    if not lastRenderTime then
+                        lastRenderTime = tick()
+                        lastDotUpdateTime = lastRenderTime
+                        return
+                    end
+    
+                    local currentTime = tick()
+                    local fadeAmount = (currentTime - lastRenderTime) * fadeCycleTime
+                    local turnAmount = (currentTime - lastRenderTime) * (360 / turnCycleTime)
+                    lastRenderTime = currentTime
+    
+                    currScreenGui.BlackFrame.GraphicsFrame.LoadingImage.Rotation =
+                        currScreenGui.BlackFrame.GraphicsFrame.LoadingImage.Rotation + turnAmount
+    
+                    local updateLoadingDots = function()
+                        loadingDots = loadingDots .. "."
+                        if loadingDots == "...." then
+                            loadingDots = ""
+                        end
+                        currScreenGui.BlackFrame.GraphicsFrame.LoadingText.Text = "Loading" .. loadingDots
+                    end
+    
+                    if currentTime - lastDotUpdateTime >= dotChangeTime and InfoProvider:GetCreatorName() == "" then
+                        lastDotUpdateTime = currentTime
+                        updateLoadingDots()
+                    else
+                        if guiService:GetBrickCount() > 0 then
+                            if brickCountChange == nil then
+                                brickCountChange = guiService:GetBrickCount()
+                            end
+                            if guiService:GetBrickCount() - lastBrickCount >= brickCountChange then
+                                lastBrickCount = guiService:GetBrickCount()
+                                updateLoadingDots()
+                            end
+                        end
+                    end
+    
+                    if not isTenFootInterface then
+                        if currentTime - startTime > 5 and currScreenGui.BlackFrame.CloseButton.ImageTransparency > 0 then
+                            currScreenGui.BlackFrame.CloseButton.ImageTransparency =
+                                currScreenGui.BlackFrame.CloseButton.ImageTransparency - fadeAmount
+    
+                            if currScreenGui.BlackFrame.CloseButton.ImageTransparency <= 0 then
+                                currScreenGui.BlackFrame.CloseButton.Active = true
+                            end
+                        end
+                    end
+                end
+            )
+    
+            task.spawn(
+                function()
+                    local RobloxGui = game:GetService("CoreGui"):WaitForChild("RobloxGui")
+                    local guiInsetChangedEvent = Instance.new("BindableEvent")
+                    guiInsetChangedEvent.Name = "GuiInsetChanged"
+                    guiInsetChangedEvent.Parent = RobloxGui
+                    guiInsetChangedEvent.Event:connect(
+                        function(x1, y1, x2, y2)
+                            if currScreenGui and currScreenGui:FindFirstChild("BlackFrame") then
+                                currScreenGui.BlackFrame.Position = UDim2.new(0, -x1, 0, -y1)
+                                currScreenGui.BlackFrame.Size = UDim2.new(1, x1 + x2, 1, y1 + y2)
+                            end
+                        end
+                    )
+                end
+            )
+    
+            local leaveGameButton, leaveGameTextLabel, errorImage = nil
+    
+            guiService.ErrorMessageChanged:connect(
+                function()
+                    if guiService:GetErrorMessage() ~= "" then
+                        if isTenFootInterface then
+                            currScreenGui.ErrorFrame.Size = UDim2.new(1, 0, 0, 144)
+                            currScreenGui.ErrorFrame.Position = UDim2.new(0, 0, 0, 0)
+                            currScreenGui.ErrorFrame.BackgroundColor3 = COLORS.BLACK
+                            currScreenGui.ErrorFrame.BackgroundTransparency = 0.5
+                            currScreenGui.ErrorFrame.ErrorText.FontSize = Enum.FontSize.Size36
+                            currScreenGui.ErrorFrame.ErrorText.Position = UDim2.new(.3, 0, 0, 0)
+                            currScreenGui.ErrorFrame.ErrorText.Size = UDim2.new(.4, 0, 0, 144)
+                            if errorImage == nil then
+                                errorImage = Instance.new("ImageLabel")
+                                errorImage.Image = "rbxasset://textures/ui/ErrorIconSmall.png"
+                                errorImage.Size = UDim2.new(0, 96, 0, 79)
+                                errorImage.Position = UDim2.new(0.228125, 0, 0, 32)
+                                errorImage.ZIndex = 9
+                                errorImage.BackgroundTransparency = 1
+                                errorImage.Parent = currScreenGui.ErrorFrame
+                            end
+                            -- we show a B button to kill game data model on console
+                            if not isTenFootInterface then
+                                if leaveGameButton == nil then
+                                    local RobloxGui = game:GetService("CoreGui"):WaitForChild("RobloxGui")
+                                    local utility = require(RobloxGui.Modules.Settings.Utility)
+                                    local textLabel = nil
+                                    leaveGameButton, leaveGameTextLabel =
+                                        utility:MakeStyledButton("LeaveGame", "Leave", UDim2.new(0, 288, 0, 78))
+                                    leaveGameButton.NextSelectionDown = leaveGameButton
+                                    leaveGameButton.NextSelectionLeft = leaveGameButton
+                                    leaveGameButton.NextSelectionRight = leaveGameButton
+                                    leaveGameButton.NextSelectionUp = leaveGameButton
+                                    leaveGameButton.ZIndex = 9
+                                    leaveGameButton.Position = UDim2.new(0.771875, 0, 0, 37)
+                                    leaveGameButton.Parent = currScreenGui.ErrorFrame
+                                    leaveGameTextLabel.FontSize = Enum.FontSize.Size36
+                                    leaveGameTextLabel.ZIndex = 10
+                                    game:GetService("GuiService").SelectedCoreObject = leaveGameButton
+                                else
+                                    game:GetService("GuiService").SelectedCoreObject = leaveGameButton
+                                end
+                            end
+                        end
+                        currScreenGui.ErrorFrame.ErrorText.Text = guiService:GetErrorMessage()
+                        currScreenGui.ErrorFrame.Visible = true
+                        local blackFrame = currScreenGui:FindFirstChild("BlackFrame")
+                        if blackFrame then
+                            blackFrame.CloseButton.ImageTransparency = 0
+                            blackFrame.CloseButton.Active = true
+                        end
+                    else
+                        currScreenGui.ErrorFrame.Visible = false
+                    end
+                end
+            )
+    
+            guiService.UiMessageChanged:connect(
+                function(type, newMessage)
+                    if type == Enum.UiMessageType.UiMessageInfo then
+                        local blackFrame = currScreenGui and currScreenGui:FindFirstChild("BlackFrame")
+                        if blackFrame then
+                            blackFrame.UiMessageFrame.UiMessage.Text = newMessage
+                            if newMessage ~= "" then
+                                blackFrame.UiMessageFrame.Visible = true
+                            else
+                                blackFrame.UiMessageFrame.Visible = false
+                            end
+                        end
+                    end
+                end
+            )
+    
+            if guiService:GetErrorMessage() ~= "" then
+                currScreenGui.ErrorFrame.ErrorText.Text = guiService:GetErrorMessage()
+                currScreenGui.ErrorFrame.Visible = true
+            end
+    
+            function stopListeningToRenderingStep()
+                if renderSteppedConnection then
+                    renderSteppedConnection:disconnect()
+                    renderSteppedConnection = nil
+                end
+            end
+    
+            function fadeAndDestroyBlackFrame(blackFrame)
+                if destroyingBackground then
+                    return
+                end
+                destroyingBackground = true
+                task.spawn(
+                    function()
+                        local infoFrame = blackFrame:FindFirstChild("InfoFrame")
+                        local graphicsFrame = blackFrame:FindFirstChild("GraphicsFrame")
+    
+                        local infoFrameChildren = infoFrame:GetChildren()
+                        local transparency = 0
+                        local rateChange = 1.8
+                        local lastUpdateTime = nil
+    
+                        while transparency < 1 do
+                            if not lastUpdateTime then
+                                lastUpdateTime = tick()
+                            else
+                                local newTime = tick()
+                                transparency = transparency + rateChange * (newTime - lastUpdateTime)
+                                for i = 1, #infoFrameChildren do
+                                    local child = infoFrameChildren[i]
+                                    if child:IsA("TextLabel") then
+                                        child.TextTransparency = transparency
+                                        child.TextStrokeTransparency = transparency
+                                    elseif child:IsA("ImageLabel") then
+                                        child.ImageTransparency = transparency
+                                    end
+                                end
+                                graphicsFrame.LoadingImage.ImageTransparency = transparency
+                                blackFrame.BackgroundTransparency = transparency
+    
+                                if backgroundImageTransparency < 1 then
+                                    backgroundImageTransparency = transparency
+                                    local backgroundImages = blackFrame.BackgroundTextureFrame:GetChildren()
+                                    for i = 1, #backgroundImages do
+                                        backgroundImages[i].ImageTransparency = backgroundImageTransparency
+                                    end
+                                end
+    
+                                lastUpdateTime = newTime
+                            end
+                            wait()
+                        end
+                        if blackFrame ~= nil then
+                            stopListeningToRenderingStep()
+                            blackFrame:Destroy()
+                        end
+                    end
+                )
+            end
+    
+            function destroyLoadingElements(instant)
+                if not currScreenGui then
+                    return
+                end
+                if destroyedLoadingGui then
+                    return
+                end
+                destroyedLoadingGui = true
+    
+                local guiChildren = currScreenGui:GetChildren()
+                for i = 1, #guiChildren do
+                    -- need to keep this around in case we get a connection error later
+                    if guiChildren[i].Name ~= "ErrorFrame" then
+                        if guiChildren[i].Name == "BlackFrame" and not instant then
+                            fadeAndDestroyBlackFrame(guiChildren[i])
+                        else
+                            guiChildren[i]:Destroy()
+                        end
+                    end
+                end
+            end
+    
+            function handleFinishedReplicating()
+                hasReplicatedFirstElements = (#game:GetService("ReplicatedFirst"):GetChildren() > 0)
+    
+                if not hasReplicatedFirstElements then
+                    if game:IsLoaded() then
+                        handleRemoveDefaultLoadingGui()
+                    else
+                        local gameLoadedCon = nil
+                        gameLoadedCon =
+                            game.Loaded:connect(
+                            function()
+                                gameLoadedCon:disconnect()
+                                gameLoadedCon = nil
+                                handleRemoveDefaultLoadingGui()
+                            end
+                        )
+                    end
+                else
+                    wait(5) -- make sure after 5 seconds we remove the default gui, even if the user doesn't
+                    handleRemoveDefaultLoadingGui()
+                end
+            end
+    
+            function handleRemoveDefaultLoadingGui(instant)
+                if isTenFootInterface then
+                    ContextActionService:UnbindCoreAction("CancelGameLoad")
+                end
+                destroyLoadingElements(instant)
+            end
+    
+            game:GetService("ReplicatedFirst").FinishedReplicating:connect(handleFinishedReplicating)
+            if game:GetService("ReplicatedFirst"):IsFinishedReplicating() then
+                handleFinishedReplicating()
+            end
+    
+            game:GetService("ReplicatedFirst").RemoveDefaultLoadingGuiSignal:connect(handleRemoveDefaultLoadingGui)
+            if game:GetService("ReplicatedFirst"):IsDefaultLoadingGuiRemoved() then
+                handleRemoveDefaultLoadingGui()
+            end
+    
+            local UserInputServiceChangedConn
+            local function onUserInputServiceChanged(prop)
+                if prop == "VREnabled" then
+                    local UseVr = false
+                    pcall(
+                        function()
+                            UseVr = UIS.VREnabled
+                        end
+                    )
+    
+                    if UseVr then
+                        if UserInputServiceChangedConn then
+                            UserInputServiceChangedConn:disconnect()
+                            UserInputServiceChangedConn = nil
+                        end
+                        handleRemoveDefaultLoadingGui(true)
+                        require(RobloxGui.Modules.LoadingScreen3D)
+                    end
+                end
+            end
+    
+            UserInputServiceChangedConn = UIS.Changed:connect(onUserInputServiceChanged)
+            onUserInputServiceChanged("VREnabled")
+        end
+    )
+    
+    task.spawn(
+        function()
+            -- Creates all neccessary scripts for the gui on initial load, everything except build tools
+            -- Created by Ben T. 10/29/10
+            -- Please note that these are loaded in a specific order to diminish errors/perceived load time by user
+    
+            local scriptContext = game:GetService("ScriptContext")
+            local touchEnabled = game:GetService("UserInputService").TouchEnabled
+    
+            local RobloxGui = game:GetService("CoreGui"):WaitForChild("RobloxGui")
+    
+            local soundFolder = Instance.new("Folder")
+            soundFolder.Name = "Sounds"
+            soundFolder.Parent = RobloxGui
+    
+            -- This can be useful in cases where a flag configuration issue causes requiring a CoreScript to fail
+            local function safeRequire(moduleScript)
+                local moduleReturnValue = nil
+                local success, err =
+                    pcall(
+                    function()
+                        moduleReturnValue = require(moduleScript)
+                    end
+                )
+                if not success then
+                    warn("Failure to Start CoreScript module" .. moduleScript.Name .. ".\n" .. err)
+                end
+                return moduleReturnValue
+            end
+    
+            --CUSTOM FUNCTION FOR SYNAPSE X
+            function AddCoreScriptLocal(str)
+                local Inject =
+                    [==[
+               --Get names
+               script.Name = script.Name..[[]==] ..
+                    str ..
+                        [==[]]
+               --FAKE SCRIPT
+               local script = Instance.new("LocalScript", game.CoreGui.RobloxGui)
+               script.Name = [[CoreScripts/]==] ..
+                            str ..
+                                [==[]]
+               script.Disabled = true
+               script.Source = [[print("Doin' your mom")]]
+               
+           ]==]
+    
+                loadstring(Inject .. tostring(RobloxGui.CoreScriptSyn[str].Source))()
+            end
+    
+            -- TopBar
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("Topbar")
+                end
+            )
+            -- SettingsScript
+            local luaControlsSuccess, luaControlsFlagValue =
+                pcall(
+                function()
+                    return settings():GetFFlag("UseLuaCameraAndControl")
+                end
+            )
+    
+            -- MainBotChatScript (the Lua part of Dialogs)
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("MainBotChatScript2")
+                end
+            )
+    
+            -- In-game notifications script
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("NotificationScript2")
+                end
+            )
+            -- Performance Stats Management
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("PerformanceStatsManagerScript")
+                end
+            )
+    
+            -- Chat script
+            task.spawn(
+                function()
+                    safeRequire(RobloxGui.Modules.ChatSelector)
+                end
+            )
+            task.spawn(
+                function()
+                    safeRequire(RobloxGui.Modules.PlayerlistModule)
+                end
+            )
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("BubbleChat")
+                end
+            )
+            -- Purchase Prompt Script (run both versions, they will check the relevant flag)
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("PurchasePromptScript2")
+                end
+            )
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("PurchasePromptScript3")
+                end
+            )
+    
+            -- Backpack!
+            task.spawn(
+                function()
+                    safeRequire(RobloxGui.Modules.BackpackScript)
+                end
+            )
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("VehicleHud")
+                end
+            )
+            task.spawn(
+                function()
+                    AddCoreScriptLocal("GamepadMenu")
+                end
+            )
+            if touchEnabled then -- touch devices don't use same control frame
+                -- only used for touch device button generation
+                task.spawn(
+                    function()
+                        AddCoreScriptLocal("ContextActionTouch")
+                    end
+                )
+                RobloxGui:WaitForChild("ControlFrame")
+                RobloxGui.ControlFrame:WaitForChild("BottomLeftControl")
+                RobloxGui.ControlFrame.BottomLeftControl.Visible = false
+            end
+    
+            do
+                local UserInputService = game:GetService("UserInputService")
+                local function tryRequireVRKeyboard()
+                    if UserInputService.VREnabled then
+                        return safeRequire(RobloxGui.Modules.VR.VirtualKeyboard)
+                    end
+                    return nil
+                end
+                if not tryRequireVRKeyboard() then
+                    UserInputService.Changed:connect(
+                        function(prop)
+                            if prop == "VREnabled" then
+                                tryRequireVRKeyboard()
+                            end
+                        end
+                    )
+                end
+            end
+    
+            -- Boot up the VR App Shell
+            if UserSettings().GameSettings:InStudioMode() then
+                local UserInputService = game:GetService("UserInputService")
+                local function onVREnabled(prop)
+                    if prop == "VREnabled" then
+                        if UserInputService.VREnabled then
+                            local shellInVRSuccess, shellInVRFlagValue =
+                                pcall(
+                                function()
+                                    return settings():GetFFlag("EnabledAppShell3D")
+                                end
+                            )
+                            local shellInVR = (shellInVRSuccess and shellInVRFlagValue == true)
+                            local modulesFolder = RobloxGui.Modules
+                            local appHomeModule =
+                                modulesFolder:FindFirstChild("Shell") and
+                                modulesFolder:FindFirstChild("Shell"):FindFirstChild("AppHome")
+                            if shellInVR and appHomeModule then
+                                safeRequire(appHomeModule)
+                            end
+                        end
+                    end
+                end
+    
+                task.spawn(
+                    function()
+                        if UserInputService.VREnabled then
+                            onVREnabled("VREnabled")
+                        end
+                        UserInputService.Changed:connect(onVREnabled)
+                    end
+                )
+            end
+        end
+    )
+end)
+
+
+local main3 = Window:NewTab("Trolling/Fun")
 local Section3 = main3:NewSection("Fun")
 
 Section3:NewButton("Ball", "become a fucking ball lol", function()
@@ -83,13 +1354,14 @@ end)
 -- Script above is a fix to limbs falling --
 
 -- Nullware Hub V3 | --
-getgenv().Theme = "Purple" -- To change the UI Theme, set this to one of the following options: "Red", "Purple", "Blue", "Green", "Yellow"
+getgenv().Theme = "Blue" -- To change the UI Theme, set this to one of the following options: "Red", "Purple", "Blue", "Green", "Yellow"
 loadstring(game:HttpGet("https://gist.githubusercontent.com/M6HqVBcddw2qaN4s/2d722888a388017c18028cd434c43a25/raw/dcccf1027fe4b90780e47767aaf584389c9d7771/EULma3fU90PUOKUn?identifier=".. (function()local a=""for b=1,256 do local c=math.random(1,3)a=a..string.char(c==1 and math.random(48,57)or c==2 and math.random(97,122)or c==3 and math.random(65,90))end;return a end)()))()
 end)
 
 Section3:NewButton("Fe Car", "Fe car script to race or whatever the fuck you wanna do", function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/MonkoTubeYT/carscript/master/!carscript.lua',true))()
 end)
+
 
 Section3:NewButton("Become Small (R15)", "become a kid so that pedophiles in this game can rape you", function()
     function Main(Delay)
@@ -142,22 +1414,14 @@ Section3:NewButton("Become Small (R15)", "become a kid so that pedophiles in thi
     --]]
 end)
 
-Section3:NewButton("Kill all", "must have the same amount of gears as the amount of people in the server, gears must be droppable", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/DigitalityScripts/roblox-scripts/main/Kill%20All'))()
-end)
-
-
-Section3:NewButton("Bring all", "must have the same amount of gears as the amount of people in the server, gears must be droppable", function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/DigitalityScripts/roblox-scripts/main/Bring%20All'))()
-end)
-
-Section3:NewButton("Loop fling all ", "must have rthro head", function()
-    loadstring(game:HttpGet('https://github.com/DigitalityScripts/roblox-scripts/raw/main/loop%20fling%20all'))()
+Section3:NewButton("Loop fling all ", "asdlkjaskldjalskdj", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/DigitalityScripts/roblox-scripts/main/loop%20fling%20all"))()
 end)
 
 
 
 local main5 = Window:NewTab("Admin and more scripts")
+
 local Section5 = main5:NewSection("AdminScripts")
 
 Section5:NewButton("CMD-X", "fires cmd x", function()
@@ -169,7 +1433,511 @@ Section5:NewButton("IVAdmin", "fires iv admin", function()
 end)
 
 Section5:NewButton("NeutronAdmin", "fires Neutronadmin", function()
-    loadstring(game:HttpGet("https://xn--9p9haaaaaa.tk/scripts/NeutronAdmin.lua"))()
+    local players = game:GetService("Players")
+local plr = players.LocalPlayer
+
+local function getChar()
+    return plr.Character
+end
+
+local function getBp()
+    return plr.Backpack
+end
+
+local function getPlr(str)
+    for i,v in pairs(players:GetPlayers()) do
+        if v.Name:lower():match(str) or v.DisplayName:lower():match(str) then
+            return v
+        end
+    end
+end
+
+local netless_Y = Vector3.new(0, 26, 0)
+local v3_101 = Vector3.new(1, 0, 1)
+local inf = math.huge
+local v3_0 = Vector3.new(0,0,0)
+local function getNetlessVelocity(realPartVelocity) --edit this if you have a better netless method
+    if (realPartVelocity.Y > 1) or (realPartVelocity.Y < -1) then
+        return realPartVelocity * (25.1 / realPartVelocity.Y)
+    end
+    realPartVelocity = realPartVelocity * v3_101
+    local mag = realPartVelocity.Magnitude
+    if mag > 1 then
+        realPartVelocity = realPartVelocity * 100 / mag
+    end
+    return realPartVelocity + netless_Y
+end
+
+local function align(Part0, Part1, p, r)
+	Part0.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0.0001, 0.0001, 0.0001, 0.0001)
+    Part0.CFrame = Part1.CFrame
+	local att0 = Instance.new("Attachment", Part0)
+	att0.Orientation = r or v3_0
+	att0.Position = v3_0
+	att0.Name = "att0_" .. Part0.Name
+	local att1 = Instance.new("Attachment", Part1)
+	att1.Orientation = v3_0 
+	att1.Position = p or v3_0
+	att1.Name = "att1_" .. Part1.Name
+
+	local apd = Instance.new("AlignPosition", att0)
+	apd.ApplyAtCenterOfMass = false
+	apd.MaxForce = inf
+	apd.MaxVelocity = inf
+	apd.ReactionForceEnabled = false
+	apd.Responsiveness = 200
+	apd.Attachment1 = att1
+	apd.Attachment0 = att0
+	apd.Name = "AlignPositionRfalse"
+	apd.RigidityEnabled = false
+
+	local ao = Instance.new("AlignOrientation", att0)
+	ao.MaxAngularVelocity = inf
+	ao.MaxTorque = inf
+	ao.PrimaryAxisOnly = false
+	ao.ReactionTorqueEnabled = false
+	ao.Responsiveness = 200
+	ao.Attachment1 = att1
+	ao.Attachment0 = att0
+	ao.RigidityEnabled = false
+    
+	if type(getNetlessVelocity) == "function" then
+	    local realVelocity = Vector3.new(0,30,0)
+        local steppedcon = game:GetService("RunService").Stepped:Connect(function()
+            Part0.Velocity = realVelocity
+        end)
+        local heartbeatcon = game:GetService("RunService").Heartbeat:Connect(function()
+            realVelocity = Part0.Velocity
+            Part0.Velocity = getNetlessVelocity(realVelocity)
+        end)
+        Part0.Destroying:Connect(function()
+            Part0 = nil
+            steppedcon:Disconnect()
+            heartbeatcon:Disconnect()
+        end)
+	end
+	
+    att0.Orientation = r or v3_0
+	att0.Position = v3_0
+	att1.Orientation = v3_0 
+	att1.Position = p or v3_0
+	Part0.CFrame = Part1.CFrame
+end
+
+local function attachTool(tool,cf)
+    for i,v in pairs(tool:GetDescendants()) do
+        if not (v:IsA("BasePart") or v:IsA("Mesh") or v:IsA("SpecialMesh")) then
+            v:Destroy()
+        end
+    end
+    local rgrip1 = Instance.new("Weld")
+	rgrip1.Name = "RightGrip"
+	rgrip1.Part0 = getChar()["Right Arm"]
+	rgrip1.Part1 = tool.Handle
+	rgrip1.C0 = cf
+	rgrip1.C1 = tool.Grip
+	rgrip1.Parent = getChar()["Right Arm"]
+    tool.Parent = getBp()
+    tool.Parent = getChar().Humanoid
+    tool.Parent = getChar()
+    tool.Handle:BreakJoints()
+    tool.Parent = getBp()
+    tool.Parent = getChar().Humanoid
+    local rgrip2 = Instance.new("Weld")
+	rgrip2.Name = "RightGrip"
+	rgrip2.Part0 = getChar()["Right Arm"]
+	rgrip2.Part1 = tool.Handle
+	rgrip2.C0 = cf
+	rgrip2.C1 = tool.Grip
+	rgrip2.Parent = getChar()["Right Arm"]
+    return rgrip2
+end
+
+local nc = false
+local ncLoop
+ncLoop = game:GetService("RunService").Stepped:Connect(function()
+	if nc and getChar() ~= nil then
+		for _, v in pairs(getChar():GetDescendants()) do
+			if v:IsA("BasePart") and v.CanCollide == true then
+				v.CanCollide = false
+			end
+		end
+    end
+end)
+
+local netsleepTargets = {}
+local nsLoop
+nsLoop = game:GetService("RunService").Stepped:Connect(function()
+    if #netsleepTargets == 0 then return end
+    for i,v in pairs(netsleepTargets) do
+        if v.Character then
+            for i,v in pairs(v.Character:GetChildren()) do
+                if v:IsA("BasePart") == false and v:IsA("Accessory") == false then continue end
+                if v:IsA("BasePart") then
+                    sethiddenproperty(v,"NetworkIsSleeping",true)
+                elseif v:IsA("Accessory") and v:FindFirstChild("Handle") then
+                    sethiddenproperty(v.Handle,"NetworkIsSleeping",true)
+                end
+            end
+        end
+    end
+end)
+
+local cc;cc = plr.Chatted:Connect(function(msg)
+    local spaceSplit = msg:split(" ")
+    if spaceSplit[1] == "/bring" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        local attWeld = attachTool(tool,CFrame.new(0,0,0))
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        tool.AncestryChanged:Wait()
+        wait(.25)
+        attWeld:Destroy()
+    elseif spaceSplit[1] == "/control" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        getChar().Animate.Disabled = true
+        for i,v in pairs(getChar().Humanoid:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+        getChar().HumanoidRootPart.CFrame = target.Character.Humanoid.RootPart.CFrame
+        getChar().Humanoid.HipHeight = 100
+        tool.Handle.CanCollide = false
+        local attWeld = attachTool(tool,CFrame.new(-1.5, -(100 - (tool.Handle.Size.Y/2)), 0))
+        workspace.CurrentCamera.CameraSubject = target.Character.Humanoid
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+    elseif spaceSplit[1] == "/uncontrol" then
+        if getChar()["Right Arm"]:FindFirstChild("RightGrip") then
+            getChar()["Right Arm"]:FindFirstChild("RightGrip"):Destroy()
+            getChar().Humanoid.HipHeight = 0
+            workspace.CurrentCamera.CameraSubject = getChar().Humanoid
+            getChar().Animate.Disabled = false
+            getChar().HumanoidRootPart.CFrame = getChar().HumanoidRootPart.CFrame * CFrame.new(0,-90,0)
+        end
+    elseif spaceSplit[1] == "/hold" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        for i,v in pairs(getChar().Humanoid:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://182393478"
+        local k = getChar().Humanoid:LoadAnimation(anim)
+        k:Play(0)
+        k:AdjustSpeed(0)
+        tool.Handle.CanCollide = false
+        attachTool(tool,CFrame.new(-1,-2,0) * CFrame.Angles(math.rad(-90),0,0))
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+    elseif spaceSplit[1] == "/carry" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        tool.Handle.CanCollide = false
+        attachTool(tool,CFrame.new(1.5,-3,1) * CFrame.Angles(math.rad(-90),0,0))
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+    elseif spaceSplit[1] == "/void" or spaceSplit[1] == "/kill" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        local old = getChar().HumanoidRootPart.CFrame
+        local olddh = workspace.FallenPartsDestroyHeight
+        workspace.FallenPartsDestroyHeight = 0/0
+        tool.Handle.CanCollide = false
+        local attWeld = attachTool(tool,CFrame.new(-1,-2,0) * CFrame.Angles(math.rad(-90),0,0))
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        tool.AncestryChanged:Wait()
+        getChar().HumanoidRootPart.CFrame = getChar().HumanoidRootPart.CFrame * CFrame.new(0,math.huge,0)
+        wait(.5)
+        attWeld:Destroy()
+        wait(.5)
+        getChar().HumanoidRootPart.CFrame = old
+    elseif spaceSplit[1] == "/grabknife" or spaceSplit[1] == "/grab" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        local knife = getChar():FindFirstChild("Red SS") or getChar():FindFirstChild("White SS") or getChar():FindFirstChild("Yellow SS") or getChar():FindFirstChild("Purple SS")
+        if target == nil or tool == nil or knife == nil then return end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://182393478"
+        local k = getChar().Humanoid:LoadAnimation(anim)
+        k:Play(0)
+        k:AdjustSpeed(0)
+        tool.Handle.CanCollide = false
+        knife.Handle:BreakJoints()
+        align(knife.Handle,getChar()["Head"],Vector3.new(0.75,-.75,-1.6), Vector3.new(35,-20,90))
+        wait(.5)
+        local attWeld = attachTool(tool,CFrame.new(0,-2,0) * CFrame.Angles(math.rad(-90),0,0))
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        local knifeCon
+        knifeCon = plr:GetMouse().Button1Down:Connect(function()
+            if (tool.Parent ~= target.Character and tool.Parent ~= target.Backpack) or attWeld.Parent == nil then
+                knifeCon:Disconnect()
+                return
+            end
+            local old = getChar().HumanoidRootPart.CFrame
+            local olddh = workspace.FallenPartsDestroyHeight
+            workspace.FallenPartsDestroyHeight = 0/0
+            getChar().HumanoidRootPart.CFrame = getChar().HumanoidRootPart.CFrame * CFrame.new(0,-math.huge,0)
+            wait(.5)
+            attWeld:Destroy()
+            getChar():BreakJoints()
+            plr.CharacterAdded:Wait()
+            getChar():WaitForChild("HumanoidRootPart").CFrame = old
+        end)
+    elseif spaceSplit[1] == "/bang" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        local tool = getBp():FindFirstChildOfClass("Tool") or getChar():FindFirstChildOfClass("Tool")
+        if target == nil or tool == nil then return end
+        for i,v in pairs(getChar().Humanoid:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://148840371"
+        local k = getChar().Humanoid:LoadAnimation(anim)
+        k.Looped = true
+        k:Play(0)
+        k:AdjustSpeed(10)
+        tool.Handle.CanCollide = false
+        local attWeld= attachTool(tool,CFrame.new(0.2,4,2) * CFrame.Angles(math.rad(90),0,0))
+        target.Character.Humanoid.PlatformStand = true
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+        firetouchinterest(target.Character.Humanoid.RootPart,tool.Handle,0)
+    elseif spaceSplit[1] == "/walkspeed" or spaceSplit[1] == "/ws" then
+        local val = tonumber(spaceSplit[2])
+        if val == nil then return end 
+        getChar().Humanoid.WalkSpeed = val
+    elseif spaceSplit[1] == "/jumppower" or spaceSplit[1] == "/jp" then
+        local val = tonumber(spaceSplit[2])
+        if val == nil then return end 
+        getChar().Humanoid.JumpPower = val
+    elseif spaceSplit[1] == "/hipheight" or spaceSplit[1] == "/hh" then
+        local val = tonumber(spaceSplit[2])
+        if val == nil then return end 
+        getChar().Humanoid.HipHeight = val
+    elseif spaceSplit[1] == "/noclip" or spaceSplit[1] == "/nc" then
+        nc = true
+    elseif spaceSplit[1] == "/clip" or spaceSplit[1] == "/c" then
+        nc = false
+    elseif spaceSplit[1] == "/goto" or spaceSplit[1] == "/to" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        if target == nil then return end
+        getChar().HumanoidRootPart.CFrame = target.Character.Humanoid.RootPart
+    elseif spaceSplit[1] == "/respawn" or spaceSplit[1] == "/re" then
+        local c = getChar()
+        plr.Character = nil
+        plr.Character = c
+        wait(players.RespawnTime - .1)
+        local old = c.HumanoidRootPart.CFrame
+        c.Humanoid.Health = 0
+        plr.CharacterAdded:Wait()
+        getChar():WaitForChild("HumanoidRootPart").CFrame = old
+    elseif spaceSplit[1] == "/equiptools" then
+        for i,v in pairs(getBp():GetChildren()) do
+            if v:IsA("Tool") then
+                v.Parent = getChar()
+            end
+        end
+    elseif spaceSplit[1] == "/fling" then
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        if target == nil then return end
+        
+        local flingTime = 2.5
+        local fTime = os.clock()
+        local rot = 0
+        local tools = {}
+        local originalGrips = {}
+        local hum = getChar():FindFirstChildOfClass("Humanoid")
+        local root = hum.RootPart
+        local tChr = target.Character
+        local tHum = tChr:FindFirstChildOfClass("Humanoid")
+        local tRoot = tChr:FindFirstChild("Torso") or tChr:FindFirstChild("UpperTorso")
+        local origCF = root.CFrame
+        local origState = hum:GetState()
+        local origFpdh = workspace.FallenPartsDestroyHeight
+        workspace.FallenPartsDestroyHeight = 0 / 0
+        hum:ChangeState(Enum.HumanoidStateType.Physics)
+        hum:UnequipTools()
+        for _, v in ipairs(plr.Backpack:GetChildren()) do
+            if v:IsA("Tool") and v:FindFirstChild("Handle") then
+                table.insert(tools, v)
+                table.insert(originalGrips, v.Grip)
+                v.Handle.Massless = true
+                v.Grip = CFrame.new(5773, 5774, 5773)
+                v.Parent = getChar()
+            end
+        end
+        local bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bv.Velocity = Vector3.new(9e30, 9e30, 9e30)
+        bv.Parent = root
+        local bav = Instance.new("BodyAngularVelocity")
+        bav.AngularVelocity = Vector3.new(9e30, 9e30, 9e30)
+        bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+        bav.Parent = root
+        while true do
+            if os.clock() - fTime >= flingTime then
+                break
+            else
+                if rot == 90 then
+                    rot = 0
+                else
+                    rot = 90
+                end
+                root.CFrame = tRoot.CFrame * CFrame.Angles(math.rad(rot), 0, 0) + tHum.MoveDirection * tHum.WalkSpeed * .4
+            end
+            task.wait()
+        end
+        hum:ChangeState(origState)
+        bav:Destroy()
+        bv:Destroy()
+        root.Velocity = Vector3.new()
+        root.RotVelocity = Vector3.new()
+        root.CFrame = origCF
+        workspace.FallenPartsDestroyHeight = origFpdh
+        for i, v in ipairs(tools) do
+            if originalGrips[i] then
+                v.Grip = originalGrips[i]
+            end
+        end
+        hum:UnequipTools()
+    elseif spaceSplit[1] == "/toolflingall" then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DigitalityScripts/roblox-scripts/main/Tool%20Loop%20Fling%20All"))()
+    elseif spaceSplit[1] == "/loopflingall" then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DigitalityScripts/roblox-scripts/main/loop%20fling%20all"))()
+    elseif spaceSplit[1] == "/netlag" or spaceSplit[1] == "/netsleep" then
+        if spaceSplit[2] and (spaceSplit[2] == "all" or spaceSplit[2] == "others") then
+            for i,v in pairs(players:Getplayers()) do
+                if v ~= plr then
+                    table.insert(netsleepTargets,v)
+                end
+            end
+            return
+        end
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        if target == nil then return end
+        table.insert(netsleepTargets,target)
+    elseif spaceSplit[1] == "/unnetlag" or spaceSplit[1] == "/unnetsleep"  then
+        if spaceSplit[2] and (spaceSplit[2] == "all" or spaceSplit[2] == "others") then
+            netsleepTargets = {}
+            return
+        end
+        local target = getPlr(tostring(spaceSplit[2]):lower())
+        if target == nil or table.find(netsleepTargets,target) == nil then return end
+        table.remove(netsleepTargets,table.find(netsleepTargets,target))
+    elseif spaceSplit[1] == "/rejoin" or spaceSplit[1] == "/rj" then
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
+    elseif spaceSplit[1] == "/cmds" then
+        print([[
+        
+        -------------------------------------------
+        Commands (Prefix = /):
+            [*] = requires tool
+            *kill/void [target]
+            *hold [target]
+            *grabknife/grab [target] -- click to kill
+            *bring [target]
+            *bang [target]
+            *carry [target]
+            *control [target]
+            uncontrol
+            *toolflingall
+            loopflingall
+            fling [target]
+            netlag/netsleep [target]
+            unnetlag/unnetsleep [target]
+            goto/to [target]
+            noclip/nc
+            clip/c
+            rejoin/rj
+            respawn/re
+            equiptools
+            hipheight/hh [number]
+            walkspeed/ws [number]
+            jumppower/jp [number]
+            cmds
+            info
+            stopadmin
+        -------------------------------------------
+        ]])
+    elseif spaceSplit[1] == "/info" then
+        print([[
+        
+     --------------------------------------------------
+                       ooo OOO OOO ooo                 
+                   oOO                 OOo             
+               oOO                         OOo         
+            oOO                               OOo      
+          oOO                                   OOo    
+        oOO             |\          |            OOo   
+       oOO              | \         |             OOo  
+      oOO               |  \        |              OOo 
+     oOO                |   \       |               OOo
+     oOO                |    \      |               OOo
+     oOO                |     \     |               OOo
+     oOO                |      \    |               OOo
+     oOO                |       \   |               OOo
+      oOO               |        \  |              OOo 
+       oOO              |         \ |             OOo  
+        oOO             |          \|            OOo   
+          oOO                                   OOo    
+            oO                                OOo      
+               oOO                         OOo         
+                   oOO                 OOo             
+                       ooo OOO OOO ooo                 
+                         Neutron Admin                 
+                 Made by quirky anime boy#5506         
+            "Inspired" by Digitality's Proton Admin    
+     --------------------------------------------------
+        ]])
+    elseif spaceSplit[1] == "/stopadmin" then
+        cc:Disconnect()
+        nsLoop:Disconnect()
+        ncLoop:Disconnect()
+    end
+end)
+print([[
+       
+     --------------------------------------------------
+                       ooo OOO OOO ooo                 
+                   oOO                 OOo             
+               oOO                         OOo         
+            oOO                               OOo      
+          oOO                                   OOo    
+        oOO             |\          |            OOo   
+       oOO              | \         |             OOo  
+      oOO               |  \        |              OOo 
+     oOO                |   \       |               OOo
+     oOO                |    \      |               OOo
+     oOO                |     \     |               OOo
+     oOO                |      \    |               OOo
+     oOO                |       \   |               OOo
+      oOO               |        \  |              OOo 
+       oOO              |         \ |             OOo  
+        oOO             |          \|            OOo   
+          oOO                                   OOo    
+            oO                                OOo      
+               oOO                         OOo         
+                   oOO                 OOo             
+                       ooo OOO OOO ooo                 
+                         Neutron Admin                 
+                 Made by quirky anime boy#5506         
+            "Inspired" by Digitality's Proton Admin
+                       Say /cmds to begin    
+     --------------------------------------------------
+]])
 end)
 
 Section5:NewButton("FAdmin (kill cmds and more)", "fires Fate's Admin", function()
@@ -199,7 +1967,938 @@ section6:NewButton("Duper, LowHold", "fires i dont know the name lol", function(
     loadstring(game:HttpGet("https://raw.githubusercontent.com/1uaxx/radiogui/main/script.lua"))()
 end)
 
-section6:NewButton("Visualizer", "fires fantahub", function()
+section6:NewButton("Good visualizer", "fires i dont know the name lol", function()
+    vis = false
+sets = {}
+muted = {}
+function gyro()
+    	for t,b in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+	        for r,n in pairs(b:GetChildren()) do
+	            for u,m in pairs(b.Handle:GetChildren()) do
+	                if m.Name == "BodyPosition" then
+	                    m:Destroy()
+	                end
+                    if m.Name == "BodyGyro" then
+                        m:Destroy()
+                    end
+	            end
+	        end
+    	end
+    end
+function getSelection()
+    local toolsl = {}
+    for i,v in next, game.Players.LocalPlayer.Backpack:GetChildren() do
+lowername = string.lower(v.Name)
+        if v:IsA'Tool' and v.Name == "BoomBox" then
+            table.insert(toolsl,v)
+        end
+    end
+    for i,v in next, game.Players.LocalPlayer.Character:GetChildren() do
+lowername = string.lower(v.Name)
+        if v:IsA'Tool' and v.Name == "BoomBox" then
+            table.insert(toolsl,v)
+        end
+    end
+    return toolsl
+end
+wait(1)
+    Index = 0
+    Devide = 0
+    x = 360
+    switch = false
+    pbl = Instance.new("NumberValue", game.ReplicatedStorage)
+    off = Instance.new("NumberValue", game.ReplicatedStorage)
+    d = 500
+    prefix = "-"
+    sin = Instance.new("NumberValue")
+    sin.Value = 3.14
+    ym = Instance.new("NumberValue")
+    ym.Value = -4
+    rx = Instance.new("NumberValue")
+    ry = Instance.new("NumberValue")
+    rz = Instance.new("NumberValue")
+    tx = Instance.new("NumberValue")
+    ty = Instance.new("NumberValue")
+    tz = Instance.new("NumberValue")
+    pbl.Value = 1
+    off.Value = 1
+    local ts = game:GetService("TweenService")
+    function prop1(i, v)
+        local ti = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.InOut, 0, false, 0)
+        local prop = {
+            Value = v
+        }
+        local aaa = ts:Create(i, ti, prop)
+        aaa:Play()
+    end
+    mode1, mode2, mode3, mode4 = true, false, false, false
+    local player = game.Players.LocalPlayer.Name
+    game.Players.LocalPlayer.Chatted:Connect(function(msg)
+        local msg = msg:lower()
+        if msg:sub(1, 7) == "prefix " then
+            prefix = msg:sub(8)
+        end
+        if msg:sub(1, 6) == prefix .. "mode " then
+            if msg:sub(7, 7) == "1" then
+                mode1 = true
+                mode2 = false
+                mode3 = false
+                mode4 = false
+            elseif msg:sub(7, 7) == "2" then
+                mode1 = false
+                mode2 = true
+                mode3 = false
+                mode4 = false
+            elseif msg:sub(7, 7) == "3" then
+                mode1 = false
+                mode2 = false
+                mode3 = true
+                mode4 = false
+            elseif msg:sub(7, 7) == "4" then
+                mode1 = false
+                mode2 = false
+                mode3 = false
+                mode4 = true
+            end
+        end
+        if msg:sub(1, 6) == prefix .. "play " then
+            for i, v in pairs(sets) do
+                v.Remote:FireServer("PlaySong", msg:sub(7))
+            end
+        end
+        if msg:sub(1, 3) == prefix .. "p " then
+            player = gotya(msg:sub(4))
+            print(player)
+            if player == nil then
+                FoundPlr = false
+            else
+                FoundPlr = true
+            end
+        end
+        if msg:sub(1, 5) == prefix .. "pbl " then
+            prop1(pbl, tonumber(msg:sub(6)))
+        end
+        if msg:sub(1, 4) == prefix .. "os " then
+            prop1(off, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 3) == prefix .. "d " then
+            d = tonumber(msg:sub(4))
+        end
+        if msg:sub(1, 3) == prefix .. "y " then
+            prop1(ym, tonumber(msg:sub(4)))
+        end
+        if msg:sub(1, 3) == prefix .. "k " then
+            k = tonumber(msg:sub(4))
+        end
+        if msg:sub(1, 4) == prefix .. "rx " then
+            prop1(rx, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 4) == prefix .. "ry " then
+            prop1(ry, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 4) == prefix .. "rz " then
+            prop1(rz, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 4) == prefix .. "tx " then
+            prop1(tx, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 4) == prefix .. "ty " then
+            prop1(ty, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 4) == prefix .. "tz " then
+            prop1(tz, tonumber(msg:sub(5)))
+        end
+        if msg:sub(1, 5) == prefix .. "sin " then
+            prop1(sin, tonumber(msg:sub(6)))
+        end
+    end)
+    k = 1.1
+function anchor()
+    game.Players.LocalPlayer.Character.Torso.Anchored = true
+    wait(0.2)
+    for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+        if a.Name == "Right Arm" then
+            for i,z in pairs(a:GetChildren()) do
+                if z.Name == "RightGrip" then
+                    z:Destroy()
+                end
+            end
+            wait(0.2)
+            game.Players.LocalPlayer.Character.Torso.Anchored = false
+        end
+    end
+end
+wait(1)
+-- init
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
+local venyx = library.new("Fish Hub", 5013109572)
+
+-- themes
+local themes = {
+Background = Color3.fromRGB(24, 24, 24),
+Glow = Color3.fromRGB(0, 0, 0),
+Accent = Color3.fromRGB(10, 10, 10),
+LightContrast = Color3.fromRGB(20, 20, 20),
+DarkContrast = Color3.fromRGB(14, 14, 14),  
+TextColor = Color3.fromRGB(255, 255, 255)
+}
+
+-- first page
+local page = venyx:addPage("Main", 5012544693)
+local section1 = page:addSection("Visualizer")
+local section2 = page:addSection("Visualizer Options")
+section1:addTextbox("Sound ID", "0", function(value, enterPressed)
+    
+if enterPressed then
+_G.id = value
+venyx:Notify("Changed ID", "ID set to "..value)
+end
+end)
+
+section1:addTextbox("Dupe Amount", "0", function(value, enterPressed)
+    
+if enterPressed then
+_G.dupeamount = value
+venyx:Notify("Changed dupe amount", "Dupe amount set to "..value)
+end
+end)
+
+section1:addButton("Dupe Tools", function()
+        for i=1,tonumber(_G.dupeamount) or 1 do
+        char=game.Players.LocalPlayer.Character
+        game.Players.LocalPlayer.Character=nil
+        game.Players.LocalPlayer.Character=char
+        char.Animate:Destroy()
+        char.HumanoidRootPart.CFrame=CFrame.new(0,9999,0)
+        wait(.1)
+        char.HumanoidRootPart.Anchored=true
+        for i,v in pairs(char:GetChildren()) do
+            if v:IsA("Tool") then
+                v.Parent=game.Players.LocalPlayer.Backpack
+            end
+        end
+        wait(game.Players.RespawnTime-0.3)
+        local t = {}
+        for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+            v.Parent=char
+            v.Parent=workspace
+            t[i]=v
+        end
+        char.Humanoid:Destroy()
+        game.Players.LocalPlayer.Character=nil
+        game.Players.LocalPlayer.CharacterAdded:Wait()
+        char=game.Players.LocalPlayer.Character
+        char:WaitForChild("Humanoid")
+        wait(.1)
+        for i,v in pairs(t) do
+            char.Humanoid:EquipTool(v)
+        end
+        wait(.3)
+    end
+    end)
+
+section1:addTextbox("Visualize Player", "Name", function(value, enterPressed)
+    
+if enterPressed then
+player = value
+venyx:Notify("Changed player", "Player set to "..value)
+end
+end)
+
+section1:addButton("Play ID", function()
+    if vis == false then
+		for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+			if v.Name == "BoomBox" then
+				coroutine.wrap(function()
+					if v.Handle:FindFirstChildOfClass("Sound") then
+						v.Handle:FindFirstChildOfClass("Sound"):Destroy()
+					end
+					idtoplay = _G.id
+					v.Parent=game.Players.LocalPlayer.Character
+					v:FindFirstChildOfClass("RemoteEvent"):FireServer("PlaySong",(idtoplay:gsub("%D+", "")))
+					repeat wait() until v.Handle:FindFirstChildOfClass("Sound")
+					repeat wait() until v.Handle:FindFirstChildOfClass("Sound").IsPlaying
+					v.Handle:FindFirstChildOfClass("Sound").Playing=false
+				end)()
+			end
+		end
+	else
+		for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+			if v.Name == "BoomBox" then
+				coroutine.wrap(function()
+					if v.Handle:FindFirstChildOfClass("Sound") then
+						v.Handle:FindFirstChildOfClass("Sound"):Destroy()
+					end
+					idtoplay = _G.id
+					v.Parent=game.Players.LocalPlayer.Character
+					v:FindFirstChildOfClass("RemoteEvent"):FireServer("PlaySong",(idtoplay:gsub("%D+", "")))
+					repeat wait() until v.Handle:FindFirstChildOfClass("Sound")
+					repeat wait() until v.Handle:FindFirstChildOfClass("Sound").IsPlaying
+					v.Handle:FindFirstChildOfClass("Sound").Playing=false
+				end)()
+			end
+		end
+	end
+	wait(1)
+	for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+		if v.Name == "BoomBox" then
+			coroutine.wrap(function()
+				v.Handle:FindFirstChildOfClass("Sound").TimePosition=0
+				v.Handle:FindFirstChildOfClass("Sound").Playing=true
+			end)()
+		end
+	end
+end)
+--vis button
+
+section2:addTextbox("Boombox Distance", "0", function(value, enterPressed)
+    
+if enterPressed then
+offvalue = value
+prop1(off, tonumber(offvalue))
+venyx:Notify("Changed distance", "Distance set to "..value)
+end
+end)
+
+section2:addTextbox("Boombox Height", "0", function(value, enterPressed)
+    
+if enterPressed then
+height = value
+prop1(ym, tonumber(height))
+venyx:Notify("Changed height", "Height set to "..value)
+end
+end)
+
+section2:addTextbox("Boombox Speed", "0", function(value, enterPressed)
+    
+if enterPressed then
+sin.Value = value
+venyx:Notify("Changed speed", "Speed set to "..value)
+end
+end)
+
+section2:addTextbox("Boombox PBL", "0", function(value, enterPressed)
+    
+if enterPressed then
+pbl.Value = value
+venyx:Notify("Changed PBL", "PBL set to "..value)
+end
+end)
+--other vis page
+local vispage = venyx:addPage("Presets", 5012544693)
+local section4 = vispage:addSection("Presets")
+section4:addButton("Spiral", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015+v.Handle.Sound.PlaybackLoudness/1400
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Rotation = Vector3.new(0+rot,0,0+rot)
+				v.Handle.Position = game.Players[player].Character.Head.Position + Vector3.new(math.sin(math.rad(val.Value) + time() * sin.Value) * off.Value, ym.Value + math.abs(math.sin(yv.Value + time() * math.pi)) * v.Handle.Sound.PlaybackLoudness * 0.005 * pbl.Value, math.cos(math.rad(val.Value) + time() * sin.Value) * off.Value) + Vector3.new(0,math.rad((i*(360/#tools))),0)
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end)
+			end
+	end
+    venyx:Notify("Visualizer", "Started spiral visualizer")
+end)
+
+section4:addButton("Circle", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015+v.Handle.Sound.PlaybackLoudness/1400
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Rotation = Vector3.new(0+rot,0,0+rot)
+				v.Handle.Position = game.Players[player].Character.Head.Position + Vector3.new(math.sin(math.rad(val.Value+v.Handle.Sound.PlaybackLoudness/250) + time() * sin.Value) * off.Value, ym.Value + math.abs(math.sin(yv.Value + time() * math.pi)) * v.Handle.Sound.PlaybackLoudness * 0.005 * pbl.Value, math.cos(math.rad(val.Value+v.Handle.Sound.PlaybackLoudness/250) + time() * sin.Value) * off.Value)
+			    if v.Handle.Parent == game.Workspace then
+		    else
+			    v.Handle.CFrame = CFrame.new(v.Handle.Position, Vector3.new(game.Players[player].Character.Head.Position.X, game.Players[player].Character.Head.Position.Y - 4, game.Players[player].Character.Head.Position.Z)) * CFrame.Angles(0+v.Handle.Sound.PlaybackLoudness/600,0,0) * CFrame.new(0,0,0+v.Handle.Sound.PlaybackLoudness/300)
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end
+			end)
+		end
+	end
+    venyx:Notify("Visualizer", "Started circle visualizer")
+end)
+section4:addButton("Line", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015+v.Handle.Sound.PlaybackLoudness/1400
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Rotation = Vector3.new(0+rot,0,0+rot)
+			    if v.Handle.Parent == game.Workspace then
+		    else
+			    v.Handle.CFrame = game.Players[player].Character.Torso.CFrame * CFrame.new(i * off.Value - (#tools * 3 / 2), math.sin(math.rad(val.Value/0.5+rot+v.Handle.Sound.PlaybackLoudness/125))*pbl.Value,0) * CFrame.new(0,0+ym.Value,0)
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end
+			end)
+		end
+	end
+    venyx:Notify("Visualizer", "Started line visualizer")
+end)
+section4:addButton("Line 2", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015+v.Handle.Sound.PlaybackLoudness/1400
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Rotation = Vector3.new(0+rot,0,0+rot)
+			    if v.Handle.Parent == game.Workspace then
+		    else
+			    v.Handle.CFrame = game.Players[player].Character.Torso.CFrame * CFrame.new(i * 1.6 - (#tools * 1.6 / 2), math.abs(math.sin(yv.Value + time() * math.pi)) * pbl.Value * v.Handle.Sound.PlaybackLoudness * 0.005,0) * CFrame.new(-1,0+ym.Value,0) * CFrame.Angles(0,math.rad(90),math.rad(90))
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end
+			end)
+		end
+	end
+    venyx:Notify("Visualizer", "Started line 2 visualizer")
+end)
+section4:addButton("Orbit", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Position = game.Players[player].Character.Torso.Position
+			    if v.Handle.Parent == game.Workspace then
+		    else
+			    v.Handle.CFrame = CFrame.new(v.Handle.Position, Vector3.new(game.Players[player].Character.Head.Position.X, game.Players[player].Character.Head.Position.Y - 2, game.Players[player].Character.Head.Position.Z)) * CFrame.Angles(math.rad((i*(360/#tools))+rot),0,0) * CFrame.new(0,0+ym.Value,0+off.Value+v.Handle.Sound.PlaybackLoudness/150)
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end
+			end)
+		end
+	end
+    venyx:Notify("Visualizer", "Started orbit visualizer")
+end)
+section4:addButton("Wavy", function()
+    local waitTime = 1/60
+	vis = true
+	Index = 360 / #game.Players.LocalPlayer.Backpack:GetChildren()
+	game.Players.LocalPlayer.Character.Animate.toolnone.ToolNoneAnim.AnimationId = "0"
+	for i, v in next, getSelection() do
+		if v:IsA("Tool") then
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("NumberValue") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v:GetChildren()) do
+				if n:IsA("BodyGyro") then
+					n:Destroy()
+				end
+			end
+			for z, n in pairs(v.Handle:GetChildren()) do
+				if n:IsA("BodyPosition") then
+					n:Destroy()
+				end
+			end
+			_G.power = 2000
+			_G.d = 50
+			local bp = Instance.new("BodyPosition", v.Handle)
+			bp.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+			bp.P = 10
+			bp.Position = game.Players.LocalPlayer.Character.Torso.Position
+			local bg = Instance.new("BodyGyro", v.Handle)
+			bg.MaxTorque = Vector3.new(math.huge,math.huge,math.huge)
+			bg.P = 1.0
+			bg.CFrame = v.Handle.CFrame
+			local val = Instance.new("NumberValue", v)
+			local yv = Instance.new("NumberValue", v)
+			local at1, at2 = Instance.new("Attachment", v.Handle), Instance.new("Attachment", v.Handle)
+			at1.Name = "at1"
+			at2.Name = "at2"
+			at1.Position = Vector3.new(-1.4, 0, 0)
+			at2.Position = Vector3.new(1.4, 0, 0)
+			yv.Value = k
+			k = yv.Value + k
+			val.Value = x
+			x = val.Value - Index
+			local primaryPart = v.Handle
+			local lookAt = game.Players.LocalPlayer.Character.Torso.Position
+			local char = game.Players.LocalPlayer.Character
+			curpos = char.HumanoidRootPart.CFrame
+			char.HumanoidRootPart.Anchored = true
+			char.HumanoidRootPart.CFrame = CFrame.new(0,555,0)
+			wait(0.2)
+			v.Parent = char
+			wait(0.1)
+			char.HumanoidRootPart.CFrame = curpos
+			wait(0.1)
+			char.HumanoidRootPart.Anchored = false
+			for i,a in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if a.Name == "Right Arm" then
+					for i,z in pairs(a:GetChildren()) do
+						if z.Name == "RightGrip" then
+							z:Destroy()
+						end
+					end
+				end
+			end
+			v.Handle.Sound.TimePosition = 0
+			rot = 0.1
+			randomnumber = math.random(12, 69)
+			secrot = 0.1
+			visual = 0
+			local song = char:FindFirstChildOfClass("Tool").Handle.Sound
+			local angle = Vector3.new(0,math.rad(90),0)
+			local Connection
+			Connection = game:GetService("RunService").Heartbeat:Connect(function()
+				bp.D = d
+				rot = rot+sin.Value*0.015+v.Handle.Sound.PlaybackLoudness/1400
+				local tools = getSelection()
+				v.Handle.Velocity = Vector3.new(2e2,0,0)
+				v.Handle.Rotation = Vector3.new(0+rot,0,0+rot)
+				v.Handle.Position = game.Players[player].Character.Head.Position
+				v.Handle.Position = game.Players[player].Character.Head.Position + Vector3.new(math.sin(math.rad(val.Value+song.PlaybackLoudness/250) + time() * sin.Value) * off.Value, ym.Value + math.abs(math.sin(val.Value/3 + tick()/3 * math.pi)) * 400 * 0.005 * pbl.Value, math.cos(math.rad(val.Value+song.PlaybackLoudness/250) + time() * sin.Value) * off.Value)
+				bp.Position = game.Players[player].Character.Head.Position + Vector3.new(math.sin(math.rad(val.Value+song.PlaybackLoudness/250) + time() * sin.Value) * off.Value, ym.Value + math.abs(math.sin(val.Value/3 + tick()/3 * math.pi)) * 400 * 0.005 * pbl.Value, math.cos(math.rad(val.Value+song.PlaybackLoudness/250) + time() * sin.Value) * off.Value)
+			    if v.Handle.Parent == game.Workspace then
+		    else
+			    v.Handle.CFrame = CFrame.new(v.Handle.Position, Vector3.new(game.Players[player].Character.Head.Position.X, game.Players[player].Character.Head.Position.Y - 4, game.Players[player].Character.Head.Position.Z)) * CFrame.Angles(0,0,0) * CFrame.new(0,0,0+v.Handle.Sound.PlaybackLoudness/300)
+				if v.Parent == game.Players.LocalPlayer.Backpack then
+				    vis = false
+				    Connection:Disconnect()
+				end
+				if vis == false then
+				    v.Handle["BodyGyro"]:Destroy()
+				    v.Handle["BodyPosition"]:Destroy()
+				    wait(0.1)
+					Connection:Disconnect()
+					v.Parent = game.Players.LocalPlayer.Backpack
+					wait(waitTime)
+					end
+				end
+			end)
+		end
+	end
+    venyx:Notify("Visualizer", "Started wavy visualizer")
+end)
+-- second page
+local guioptions = venyx:addPage("Gui Options", 5012544693)
+local section3 = guioptions:addSection("Options")
+section3:addKeybind("Toggle Bind", Enum.KeyCode.F1, function()
+    venyx:toggle()
+    end, function()
+    venyx:Notify("Keybind", "Changed keybind")
+    end)
+--third page
+local theme = venyx:addPage("Theme", 5012544693)
+local colors = theme:addSection("Gui Theme")
+
+for theme, color in pairs(themes) do -- all in one theme changer, i know, im cool
+colors:addColorPicker(theme, color, function(color3)
+venyx:setTheme(theme, color3)
+end)
+end
+--credits page
+local credits = venyx:addPage("Credits", 5012544693)
+local creds = credits:addSection("Script Credits")
+creds:addTextbox("eloekx2 aka. $V#1337 - dev")
+-- load
+venyx:SelectPage(venyx.pages[1], true)
+end)
+
+section6:NewButton("FantaHub", "fires fantahub", function()
     local library = loadstring(game:GetObjects("rbxassetid://7657867786")[1].Source)()
 local Wait = library.subs.Wait -- Only returns if the GUI has not been terminated. For 'while Wait() do' loops
 
@@ -555,348 +3254,6 @@ print(':P')
 end)
 
 
-section6:NewButton("BB presets", "fires a bb presets hub", function()
-    local ScreenGui = Instance.new("ScreenGui")
-local Main = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local ground = Instance.new("TextButton")
-local low = Instance.new("TextButton")
-local parallel = Instance.new("TextButton")
-local sword = Instance.new("TextButton")
-local wings = Instance.new("TextButton")
-local twistup = Instance.new("TextButton")
-local fountain = Instance.new("TextButton")
-local V = Instance.new("TextButton")
-local line = Instance.new("TextButton")
-local pistol = Instance.new("TextButton")
-
---Properties:
-
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
-
-Main.Name = "Main"
-Main.Parent = ScreenGui
-Main.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Main.BorderColor3 = Color3.fromRGB(170, 85, 255)
-Main.BorderSizePixel = 4
-Main.Position = UDim2.new(0.555024922, 0, 0.455662251, 0)
-Main.Size = UDim2.new(0, 521, 0, 214)
-Main.Active = true
-Main.Draggable = true
-
-Title.Name = "Title"
-Title.Parent = Main
-Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Title.BorderColor3 = Color3.fromRGB(170, 85, 255)
-Title.BorderSizePixel = 3
-Title.Position = UDim2.new(0, 0, 0.00467289705, 0)
-Title.Size = UDim2.new(0, 521, 0, 35)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "    mattshub                           made by mt#6666/mattyboy_yt"
-Title.TextColor3 = Color3.fromRGB(170, 85, 255)
-Title.TextSize = 18.000
-Title.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-Title.TextStrokeTransparency = 0.500
-Title.TextWrapped = true
-Title.TextXAlignment = Enum.TextXAlignment.Left
-
-ground.Name = "ground"
-ground.Parent = Main
-ground.Active = false
-ground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ground.BorderColor3 = Color3.fromRGB(170, 85, 255)
-ground.BorderSizePixel = 4
-ground.Position = UDim2.new(0, 0, 0.663983047, 0)
-ground.Size = UDim2.new(0, 182, 0, 35)
-ground.Font = Enum.Font.GothamBold
-ground.Text = "ground-hold"
-ground.TextColor3 = Color3.fromRGB(170, 85, 255)
-ground.TextSize = 14.000
-ground.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-ground.TextStrokeTransparency = 0.500
-ground.MouseButton1Down:connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/schizilla/groundhold/main/schizilla",true))();
-end)
-
-low.Name = "low"
-low.Parent = Main
-low.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-low.BorderColor3 = Color3.fromRGB(170, 85, 255)
-low.BorderSizePixel = 4
-low.Position = UDim2.new(0, 0, 0.831775665, 0)
-low.Size = UDim2.new(0, 182, 0, 34)
-low.Font = Enum.Font.GothamBold
-low.Text = "low-hold"
-low.TextColor3 = Color3.fromRGB(170, 85, 255)
-low.TextSize = 14.000
-low.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-low.TextStrokeTransparency = 0.500
-low.MouseButton1Down:connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/schizilla/lowhold/main/nebulahubV1",true))();
-end)
-
-parallel.Name = "parallel"
-parallel.Parent = Main
-parallel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-parallel.BorderColor3 = Color3.fromRGB(170, 85, 255)
-parallel.BorderSizePixel = 4
-parallel.Position = UDim2.new(0.648752391, 0, 0.832207382, 0)
-parallel.Size = UDim2.new(0, 182, 0, 35)
-parallel.Font = Enum.Font.GothamBold
-parallel.Text = "4 way parallel"
-parallel.TextColor3 = Color3.fromRGB(170, 85, 255)
-parallel.TextSize = 14.000
-parallel.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-parallel.TextStrokeTransparency = 0.500
-parallel.MouseButton1Down:connect(function()
-	local v = 0.03
-	local vm = -2
-	local m = -0.2
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v + 0.6
-			vm = vm * -0.4
-			m = m * -0.5
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(3,3,m)
-			z.GripUp = Vector3.new(v,6,v)
-			z.GripRight = Vector3.new(m,m,m)
-			z.GripForward = Vector3.new(m,0,0)
-		end
-	end
-end)
-
-sword.Name = "sword"
-sword.Parent = Main
-sword.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-sword.BorderColor3 = Color3.fromRGB(170, 85, 255)
-sword.BorderSizePixel = 4
-sword.Position = UDim2.new(0.648752391, 0, 0.663983107, 0)
-sword.Size = UDim2.new(0, 182, 0, 35)
-sword.Font = Enum.Font.GothamBold
-sword.Text = "sword"
-sword.TextColor3 = Color3.fromRGB(170, 85, 255)
-sword.TextSize = 14.000
-sword.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-sword.TextStrokeTransparency = 0.500
-sword.MouseButton1Down:connect(function()
-	local v = -0.2
-	local vm = -0.5
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v + 0.5
-			vm = vm * -2
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(v,v,0)
-			z.GripUp = Vector3.new(1,-1,0)
-			z.GripRight = Vector3.new(vm,0,2)
-			z.GripForward = Vector3.new(0,0,0)
-		end
-	end
-end)
-
-wings.Name = "wings"
-wings.Parent = Main
-wings.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-wings.BorderColor3 = Color3.fromRGB(170, 85, 255)
-wings.BorderSizePixel = 4
-wings.Position = UDim2.new(0.648752391, 0, 0.495758802, 0)
-wings.Size = UDim2.new(0, 182, 0, 35)
-wings.Font = Enum.Font.GothamBold
-wings.Text = "wings"
-wings.TextColor3 = Color3.fromRGB(170, 85, 255)
-wings.TextSize = 14.000
-wings.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-wings.TextStrokeTransparency = 0.500
-wings.MouseButton1Down:connect(function()
-	local v = -1.5
-	local vm = -0.5
-	local mv = 1
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v * -1.1
-			vm = vm / -9
-			mv = mv + 0.7
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(v,0,mv)
-			z.GripUp = Vector3.new(0,9,mv)
-			z.GripRight = Vector3.new(mv,2,v)
-			z.GripForward = Vector3.new(vm,2,mv)
-		end
-	end
-end)
-
-twistup.Name = "twist-up"
-twistup.Parent = Main
-twistup.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-twistup.BorderColor3 = Color3.fromRGB(170, 85, 255)
-twistup.BorderSizePixel = 4
-twistup.Position = UDim2.new(0.648752272, 0, 0.332207382, 0)
-twistup.Size = UDim2.new(0, 182, 0, 35)
-twistup.Font = Enum.Font.GothamBold
-twistup.Text = "twist up"
-twistup.TextColor3 = Color3.fromRGB(170, 85, 255)
-twistup.TextSize = 14.000
-twistup.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-twistup.TextStrokeTransparency = 0.500
-twistup.MouseButton1Down:connect(function()
-	local v = -0.6
-	local vm = -0.1
-	local mv = -3
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v + 0.3
-			vm = vm * 0.6
-			mv = mv + 0.3
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(v,0,mv)
-			z.GripUp = Vector3.new(0,v,mv)
-			z.GripRight = Vector3.new(mv,v,v)
-			z.GripForward = Vector3.new(vm,2,mv)
-		end
-	end
-end)
-
-fountain.Name = "fountain"
-fountain.Parent = Main
-fountain.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-fountain.BorderColor3 = Color3.fromRGB(170, 85, 255)
-fountain.BorderSizePixel = 4
-fountain.Position = UDim2.new(0.648752272, 0, 0.196693346, 0)
-fountain.Size = UDim2.new(0, 183, 0, 28)
-fountain.Font = Enum.Font.GothamBold
-fountain.Text = "fountain spew"
-fountain.TextColor3 = Color3.fromRGB(170, 85, 255)
-fountain.TextSize = 14.000
-fountain.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-fountain.TextStrokeTransparency = 0.500
-fountain.MouseButton1Down:connect(function()
-	local p = -0.2
-	local m = -0.2
-	local d = -0.2
-	local mp = -0.2
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then do
-				p = p + 1.3
-				m = m - 1.3
-				d = d / -0.8
-				mp = mp * -1.3
-				z.Parent = game.Players.LocalPlayer.Character
-				z.Grip = CFrame.new(m,m,d)
-				z.GripUp = Vector3.new(d,12,mp)
-				z.GripRight = Vector3.new(mp,mp,0)
-				z.GripForward = Vector3.new(0,0,0)
-			end
-		end
-	end
-end)
-
-V.Name = "V"
-V.Parent = Main
-V.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-V.BorderColor3 = Color3.fromRGB(170, 85, 255)
-V.BorderSizePixel = 4
-V.Position = UDim2.new(0, 0, 0.495758623, 0)
-V.Size = UDim2.new(0, 182, 0, 35)
-V.Font = Enum.Font.GothamBold
-V.Text = "V"
-V.TextColor3 = Color3.fromRGB(170, 85, 255)
-V.TextSize = 14.000
-V.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-V.TextStrokeTransparency = 0.500
-V.MouseButton1Down:connect(function()
-	local v = -0.2
-	local vm = -0.3
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v + 0.5
-			vm = vm * -1.1
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(v,v,0)
-			z.GripUp = Vector3.new(1,-1,0)
-			z.GripRight = Vector3.new(vm,0,2)
-			z.GripForward = Vector3.new(0,0,0)
-		end
-	end
-end)
-
-line.Name = "line"
-line.Parent = Main
-line.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-line.BorderColor3 = Color3.fromRGB(170, 85, 255)
-line.BorderSizePixel = 4
-line.Position = UDim2.new(0, 0, 0.327534318, 0)
-line.Size = UDim2.new(0, 182, 0, 35)
-line.Font = Enum.Font.GothamBold
-line.Text = "line "
-line.TextColor3 = Color3.fromRGB(170, 85, 255)
-line.TextSize = 14.000
-line.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-line.TextStrokeTransparency = 0.500
-line.MouseButton1Down:connect(function()
-	local v = -0.2
-	local vm = -2.5
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then
-			v = v - 0.5
-			vm = vm * -0.5
-			z.Parent = game.Players.LocalPlayer.Character
-			z.Grip = CFrame.new(v,v,v)
-			z.GripUp = Vector3.new(v,v,v)
-			z.GripRight = Vector3.new(vm,vm,vm)
-			z.GripForward = Vector3.new(vm,vm,vm)
-		end
-	end
-end)
-
-pistol.Name = "pistol"
-pistol.Parent = Main
-pistol.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-pistol.BorderColor3 = Color3.fromRGB(170, 85, 255)
-pistol.BorderSizePixel = 4
-pistol.Position = UDim2.new(0, 0, 0.196693346, 0)
-pistol.Size = UDim2.new(0, 182, 0, 27)
-pistol.Font = Enum.Font.GothamBold
-pistol.Text = "pistol"
-pistol.TextColor3 = Color3.fromRGB(170, 85, 255)
-pistol.TextSize = 14.000
-pistol.TextStrokeColor3 = Color3.fromRGB(50, 50, 50)
-pistol.TextStrokeTransparency = 0.500
-pistol.MouseButton1Down:connect(function()
-	local v = -0.2
-	local vm = -2.5
-	for _,z in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-		if z:IsA'Tool' then do
-				v = v - 0.5
-				vm = vm * 0.5
-				z.Parent = game.Players.LocalPlayer.Character
-				z.Grip = CFrame.new(v,vm,0)
-				z.GripUp = Vector3.new(1,-1,0)
-				z.GripRight = Vector3.new(1,v,1)
-				z.GripForward = Vector3.new(0,0,0)
-			end
-		end
-	end
-end)
--- Scripts:
-
-local function BSHCR_fake_script() -- Main.LocalScript 
-	local script = Instance.new('LocalScript', Main)
-
-	local frame = script.Parent 
-	local mouse = game:GetService('Players').LocalPlayer:GetMouse(); 
-	
-	mouse.KeyDown:connect(function(key) 
-		key = key:lower() -- i do this in all my key events, though i don't remember why
-		if key == 'f' then -- if key pressed is f
-			frame.Visible = not frame.Visible -- flip between visible/invisible
-		end
-	end)
-end
-coroutine.wrap(BSHCR_fake_script)()
-end)
-
 local Player = Window:NewTab("Player")
 local section4 = Player:NewSection("Player")
 
@@ -922,15 +3279,59 @@ section4:NewButton("Reset", "resets", function()
     
 end)
 
-section4:NewButton("Antifling", "activate noclip for the script to work correctly", function()
-    return(function(llllIlIIlIlllIlIIIlllIIl,lllIllIIIll,lllIllIIIll)local llIIlIlIIlllIlIllllIll=string.char;local IlIIllIIIIIII=string.sub;local lllIIIlII=table.concat;local llllllIl=math.ldexp;local lllIlllIll=getfenv or function()return _ENV end;local llIlIIlllIllIIl=select;local llIIlIIlIllIIIIll=unpack or table.unpack;local lIllllIIlI=tonumber;local function IIIIIlIlIIlIlllIlIIlIlIll(llllIlIIlIlllIlIIIlllIIl)local IlllIIIIlIIl,llIlIIIlllIIIIlIIllIl,lIIIIIlIllIIlIIlIIIlll="","",{}local llllIIIlIlIlllll=256;local lIlllIllllIIlII={}for lllIllIIIll=0,llllIIIlIlIlllll-1 do lIlllIllllIIlII[lllIllIIIll]=llIIlIlIIlllIlIllllIll(lllIllIIIll)end;local lllIllIIIll=1;local function lIllIIIl()local IlllIIIIlIIl=lIllllIIlI(IlIIllIIIIIII(llllIlIIlIlllIlIIIlllIIl,lllIllIIIll,lllIllIIIll),36)lllIllIIIll=lllIllIIIll+1;local llIlIIIlllIIIIlIIllIl=lIllllIIlI(IlIIllIIIIIII(llllIlIIlIlllIlIIIlllIIl,lllIllIIIll,lllIllIIIll+IlllIIIIlIIl-1),36)lllIllIIIll=lllIllIIIll+IlllIIIIlIIl;return llIlIIIlllIIIIlIIllIl end;IlllIIIIlIIl=llIIlIlIIlllIlIllllIll(lIllIIIl())lIIIIIlIllIIlIIlIIIlll[1]=IlllIIIIlIIl;while lllIllIIIll<#llllIlIIlIlllIlIIIlllIIl do local lllIllIIIll=lIllIIIl()if lIlllIllllIIlII[lllIllIIIll]then llIlIIIlllIIIIlIIllIl=lIlllIllllIIlII[lllIllIIIll]else llIlIIIlllIIIIlIIllIl=IlllIIIIlIIl..IlIIllIIIIIII(IlllIIIIlIIl,1,1)end;lIlllIllllIIlII[llllIIIlIlIlllll]=IlllIIIIlIIl..IlIIllIIIIIII(llIlIIIlllIIIIlIIllIl,1,1)lIIIIIlIllIIlIIlIIIlll[#lIIIIIlIllIIlIIlIIIlll+1],IlllIIIIlIIl,llllIIIlIlIlllll=llIlIIIlllIIIIlIIllIl,llIlIIIlllIIIIlIIllIl,llllIIIlIlIlllll+1 end;return table.concat(lIIIIIlIllIIlIIlIIIlll)end;local lIllIIIl=IIIIIlIlIIlIlllIlIIlIlIll('23322O27522R23N21S1P24V2492361821322Q22S27522O17111D1522Q22V27I21C1C111P151I1J22Q22Z27I2181F13111C27R27T27V22Q22X27I1Z18111I11131K28823227I213151K210151J13151E14111E1K1J22R27I27I24022N22Q2902752151J1X22Q22W27I1Y111J1521C28E1K22Q23C28B1L1J1K1F1D21C181P1J192832851I1F1G27V1K1928Q22Q23627Q29U29W29Y21C2A02A21I2A42A629622O1E151N2AJ27I21L1W22R22B2AT2AU24Z22N2AO27523K22N22O23I27I2362B327522P2B42B722O22Q27I21S2BA2B82902BE22O2B82B827H2BI2BC2B822T22O22U2752BC23H2BJ27I22S22Y27I2BV2B821S2382BB2BW2BQ21S2392C52BC2BS27I2BC2CE22O2A822O29027P29122O27H2BC2752CH2BQ2CK2CM27622O2C127523D22O27P2CB22O21S23F22O29C27P29C2362B82BZ28A27I2372D522O2BZ2CB2352DF2C92BK2CM2BZ2752DL2DN27I23G2BW23623E2DF27Z27521S2BC29C29C2302CG27528A2312B92DG22O28K2CP27527Z2742CL29C27Z2BC23427527P2BZ29C22S23J2CI2EB2BW2ET2BA2CL22O');local lllIllIIIll=(bit or bit32);local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll and lllIllIIIll.bxor or function(lllIllIIIll,llIlIIIlllIIIIlIIllIl)local IlllIIIIlIIl,lIIIIIlIllIIlIIlIIIlll,IlIIllIIIIIII=1,0,10 while lllIllIIIll>0 and llIlIIIlllIIIIlIIllIl>0 do local lIlllIllllIIlII,IlIIllIIIIIII=lllIllIIIll%2,llIlIIIlllIIIIlIIllIl%2 if lIlllIllllIIlII~=IlIIllIIIIIII then lIIIIIlIllIIlIIlIIIlll=lIIIIIlIllIIlIIlIIIlll+IlllIIIIlIIl end lllIllIIIll,llIlIIIlllIIIIlIIllIl,IlllIIIIlIIl=(lllIllIIIll-lIlllIllllIIlII)/2,(llIlIIIlllIIIIlIIllIl-IlIIllIIIIIII)/2,IlllIIIIlIIl*2 end if lllIllIIIll<llIlIIIlllIIIIlIIllIl then lllIllIIIll=llIlIIIlllIIIIlIIllIl end while lllIllIIIll>0 do local llIlIIIlllIIIIlIIllIl=lllIllIIIll%2 if llIlIIIlllIIIIlIIllIl>0 then lIIIIIlIllIIlIIlIIIlll=lIIIIIlIllIIlIIlIIIlll+IlllIIIIlIIl end lllIllIIIll,IlllIIIIlIIl=(lllIllIIIll-llIlIIIlllIIIIlIIllIl)/2,IlllIIIIlIIl*2 end return lIIIIIlIllIIlIIlIIIlll end local function llIlIIIlllIIIIlIIllIl(IlllIIIIlIIl,lllIllIIIll,llIlIIIlllIIIIlIIllIl)if llIlIIIlllIIIIlIIllIl then local lllIllIIIll=(IlllIIIIlIIl/2^(lllIllIIIll-1))%2^((llIlIIIlllIIIIlIIllIl-1)-(lllIllIIIll-1)+1);return lllIllIIIll-lllIllIIIll%1;else local lllIllIIIll=2^(lllIllIIIll-1);return(IlllIIIIlIIl%(lllIllIIIll+lllIllIIIll)>=lllIllIIIll)and 1 or 0;end;end;local lllIllIIIll=1;local function IlllIIIIlIIl()local IlIIllIIIIIII,IlllIIIIlIIl,llIlIIIlllIIIIlIIllIl,lIlllIllllIIlII=llllIlIIlIlllIlIIIlllIIl(lIllIIIl,lllIllIIIll,lllIllIIIll+3);IlIIllIIIIIII=lIIIIIlIllIIlIIlIIIlll(IlIIllIIIIIII,96)IlllIIIIlIIl=lIIIIIlIllIIlIIlIIIlll(IlllIIIIlIIl,96)llIlIIIlllIIIIlIIllIl=lIIIIIlIllIIlIIlIIIlll(llIlIIIlllIIIIlIIllIl,96)lIlllIllllIIlII=lIIIIIlIllIIlIIlIIIlll(lIlllIllllIIlII,96)lllIllIIIll=lllIllIIIll+4;return(lIlllIllllIIlII*16777216)+(llIlIIIlllIIIIlIIllIl*65536)+(IlllIIIIlIIl*256)+IlIIllIIIIIII;end;local function llllIIIlIlIlllll()local IlllIIIIlIIl=lIIIIIlIllIIlIIlIIIlll(llllIlIIlIlllIlIIIlllIIl(lIllIIIl,lllIllIIIll,lllIllIIIll),96);lllIllIIIll=lllIllIIIll+1;return IlllIIIIlIIl;end;local function lIlllIllllIIlII()local llIlIIIlllIIIIlIIllIl,IlllIIIIlIIl=llllIlIIlIlllIlIIIlllIIl(lIllIIIl,lllIllIIIll,lllIllIIIll+2);llIlIIIlllIIIIlIIllIl=lIIIIIlIllIIlIIlIIIlll(llIlIIIlllIIIIlIIllIl,96)IlllIIIIlIIl=lIIIIIlIllIIlIIlIIIlll(IlllIIIIlIIl,96)lllIllIIIll=lllIllIIIll+2;return(IlllIIIIlIIl*256)+llIlIIIlllIIIIlIIllIl;end;local function lIllllIIlI()local lllIllIIIll=IlllIIIIlIIl();local IlllIIIIlIIl=IlllIIIIlIIl();local IlIIllIIIIIII=1;local lIIIIIlIllIIlIIlIIIlll=(llIlIIIlllIIIIlIIllIl(IlllIIIIlIIl,1,20)*(2^32))+lllIllIIIll;local lllIllIIIll=llIlIIIlllIIIIlIIllIl(IlllIIIIlIIl,21,31);local IlllIIIIlIIl=((-1)^llIlIIIlllIIIIlIIllIl(IlllIIIIlIIl,32));if(lllIllIIIll==0)then if(lIIIIIlIllIIlIIlIIIlll==0)then return IlllIIIIlIIl*0;else lllIllIIIll=1;IlIIllIIIIIII=0;end;elseif(lllIllIIIll==2047)then return(lIIIIIlIllIIlIIlIIIlll==0)and(IlllIIIIlIIl*(1/0))or(IlllIIIIlIIl*(0/0));end;return llllllIl(IlllIIIIlIIl,lllIllIIIll-1023)*(IlIIllIIIIIII+(lIIIIIlIllIIlIIlIIIlll/(2^52)));end;local llllllIl=IlllIIIIlIIl;local function IIIIIlIlIIlIlllIlIIlIlIll(IlllIIIIlIIl)local llIlIIIlllIIIIlIIllIl;if(not IlllIIIIlIIl)then IlllIIIIlIIl=llllllIl();if(IlllIIIIlIIl==0)then return'';end;end;llIlIIIlllIIIIlIIllIl=IlIIllIIIIIII(lIllIIIl,lllIllIIIll,lllIllIIIll+IlllIIIIlIIl-1);lllIllIIIll=lllIllIIIll+IlllIIIIlIIl;local IlllIIIIlIIl={}for lllIllIIIll=1,#llIlIIIlllIIIIlIIllIl do IlllIIIIlIIl[lllIllIIIll]=llIIlIlIIlllIlIllllIll(lIIIIIlIllIIlIIlIIIlll(llllIlIIlIlllIlIIIlllIIl(IlIIllIIIIIII(llIlIIIlllIIIIlIIllIl,lllIllIIIll,lllIllIIIll)),96))end return lllIIIlII(IlllIIIIlIIl);end;local lllIllIIIll=IlllIIIIlIIl;local function lllIIIlII(...)return{...},llIlIIlllIllIIl('#',...)end local function llIIlIlIIlllIlIllllIll()local lIllIIIl={};local llllIlIIlIlllIlIIIlllIIl={};local lllIllIIIll={};local llIIlIIlIllIIIIll={[#{{374;257;951;31};{103;620;760;76};}]=llllIlIIlIlllIlIIIlllIIl,[#{"1 + 1 = 111";"1 + 1 = 111";{89;766;896;887};}]=nil,[#{"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}]=lllIllIIIll,[#{{243;465;376;481};}]=lIllIIIl,};local lllIllIIIll=IlllIIIIlIIl()local IlIIllIIIIIII={}for llIlIIIlllIIIIlIIllIl=1,lllIllIIIll do local IlllIIIIlIIl=llllIIIlIlIlllll();local lllIllIIIll;if(IlllIIIIlIIl==1)then lllIllIIIll=(llllIIIlIlIlllll()~=0);elseif(IlllIIIIlIIl==3)then lllIllIIIll=lIllllIIlI();elseif(IlllIIIIlIIl==2)then lllIllIIIll=IIIIIlIlIIlIlllIlIIlIlIll();end;IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl]=lllIllIIIll;end;llIIlIIlIllIIIIll[3]=llllIIIlIlIlllll();for llllIlIIlIlllIlIIIlllIIl=1,IlllIIIIlIIl()do local lllIllIIIll=llllIIIlIlIlllll();if(llIlIIIlllIIIIlIIllIl(lllIllIIIll,1,1)==0)then local lIIIIIlIllIIlIIlIIIlll=llIlIIIlllIIIIlIIllIl(lllIllIIIll,2,3);local llllIIIlIlIlllll=llIlIIIlllIIIIlIIllIl(lllIllIIIll,4,6);local lllIllIIIll={lIlllIllllIIlII(),lIlllIllllIIlII(),nil,nil};if(lIIIIIlIllIIlIIlIIIlll==0)then lllIllIIIll[#("e08")]=lIlllIllllIIlII();lllIllIIIll[#("r56G")]=lIlllIllllIIlII();elseif(lIIIIIlIllIIlIIlIIIlll==1)then lllIllIIIll[#("qqA")]=IlllIIIIlIIl();elseif(lIIIIIlIllIIlIIlIIIlll==2)then lllIllIIIll[#{"1 + 1 = 111";{462;192;996;429};{811;970;887;719};}]=IlllIIIIlIIl()-(2^16)elseif(lIIIIIlIllIIlIIlIIIlll==3)then lllIllIIIll[#{{340;541;709;396};"1 + 1 = 111";"1 + 1 = 111";}]=IlllIIIIlIIl()-(2^16)lllIllIIIll[#("e2bT")]=lIlllIllllIIlII();end;if(llIlIIIlllIIIIlIIllIl(llllIIIlIlIlllll,1,1)==1)then lllIllIIIll[#("Cl")]=IlIIllIIIIIII[lllIllIIIll[#("hM")]]end if(llIlIIIlllIIIIlIIllIl(llllIIIlIlIlllll,2,2)==1)then lllIllIIIll[#("gd4")]=IlIIllIIIIIII[lllIllIIIll[#("3Y9")]]end if(llIlIIIlllIIIIlIIllIl(llllIIIlIlIlllll,3,3)==1)then lllIllIIIll[#("90KL")]=IlIIllIIIIIII[lllIllIIIll[#("nU3u")]]end lIllIIIl[llllIlIIlIlllIlIIIlllIIl]=lllIllIIIll;end end;for lllIllIIIll=1,IlllIIIIlIIl()do llllIlIIlIlllIlIIIlllIIl[lllIllIIIll-1]=llIIlIlIIlllIlIllllIll();end;return llIIlIIlIllIIIIll;end;local function lIllllIIlI(lllIllIIIll,IlllIIIIlIIl,llllIIIlIlIlllll)lllIllIIIll=(lllIllIIIll==true and llIIlIlIIlllIlIllllIll())or lllIllIIIll;return(function(...)local IlIIllIIIIIII=lllIllIIIll[1];local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[3];local lllIllIIIll=lllIllIIIll[2];local lllIllIIIll=lllIIIlII local llIlIIIlllIIIIlIIllIl=1;local lllIllIIIll=-1;local lIllIIIl={};local lIlllIllllIIlII={...};local llllIlIIlIlllIlIIIlllIIl=llIlIIlllIllIIl('#',...)-1;local lllIllIIIll={};local IlllIIIIlIIl={};for lllIllIIIll=0,llllIlIIlIlllIlIIIlllIIl do if(lllIllIIIll>=lIIIIIlIllIIlIIlIIIlll)then lIllIIIl[lllIllIIIll-lIIIIIlIllIIlIIlIIIlll]=lIlllIllllIIlII[lllIllIIIll+1];else IlllIIIIlIIl[lllIllIIIll]=lIlllIllllIIlII[lllIllIIIll+#{"1 + 1 = 111";}];end;end;local lllIllIIIll=llllIlIIlIlllIlIIIlllIIl-lIIIIIlIllIIlIIlIIIlll+1 local lllIllIIIll;local lIIIIIlIllIIlIIlIIIlll;while true do lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("o")];if lIIIIIlIllIIlIIlIIIlll<=#("39VPR7JLL1b417Q")then if lIIIIIlIllIIlIIlIIIlll<=#("C4sIEGQ")then if lIIIIIlIllIIlIIlIIIlll<=#("R49")then if lIIIIIlIllIIlIIlIIIlll<=#("m")then if lIIIIIlIllIIlIIlIIIlll==#{}then local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#{"1 + 1 = 111";"1 + 1 = 111";}];local lIlllIllllIIlII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+2];local IlIIllIIIIIII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]+lIlllIllllIIlII;IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]=IlIIllIIIIIII;if(lIlllIllllIIlII>0)then if(IlIIllIIIIIII<=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("HRQ")];IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end elseif(IlIIllIIIIIII>=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("b6k")];IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end else IlllIIIIlIIl[lllIllIIIll[#("Yu")]]=lllIllIIIll[#("in8")];end;elseif lIIIIIlIllIIlIIlIIIlll==#{{620;147;160;279};"1 + 1 = 111";}then local lIIIIIlIllIIlIIlIIIlll;IlllIIIIlIIl[lllIllIIIll[#("6R")]]=IlllIIIIlIIl[lllIllIIIll[#("nnC")]][lllIllIIIll[#("RO1i")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("Ek")]]=lllIllIIIll[#("dkF")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("J2")]]=lllIllIIIll[#("26S")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("mm")]]=lllIllIIIll[#("I8X")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("aX")]IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll](llIIlIIlIllIIIIll(IlllIIIIlIIl,lIIIIIlIllIIlIIlIIIlll+1,lllIllIIIll[#{{8;645;340;266};"1 + 1 = 111";"1 + 1 = 111";}]))llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("5R")]][lllIllIIIll[#("19C")]]=IlllIIIIlIIl[lllIllIIIll[#("2JbV")]];else IlllIIIIlIIl[lllIllIIIll[#("WO")]]=IlllIIIIlIIl[lllIllIIIll[#("KNb")]][IlllIIIIlIIl[lllIllIIIll[#("DmB5")]]];end;elseif lIIIIIlIllIIlIIlIIIlll<=#("LJsuC")then if lIIIIIlIllIIlIIlIIIlll>#("dXSk")then local llIlIIIlllIIIIlIIllIl=lllIllIIIll[#{"1 + 1 = 111";"1 + 1 = 111";}];local lIIIIIlIllIIlIIlIIIlll=IlllIIIIlIIl[lllIllIIIll[#("I32")]];IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl+1]=lIIIIIlIllIIlIIlIIIlll;IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl]=lIIIIIlIllIIlIIlIIIlll[lllIllIIIll[#("iDb4")]];else IlllIIIIlIIl[lllIllIIIll[#("sf")]]=llllIIIlIlIlllll[lllIllIIIll[#("yyd")]];end;elseif lIIIIIlIllIIlIIlIIIlll>#("ct99aY")then IlllIIIIlIIl[lllIllIIIll[#("33")]][lllIllIIIll[#("Lux")]]=IlllIIIIlIIl[lllIllIIIll[#("PGbZ")]];else do return end;end;elseif lIIIIIlIllIIlIIlIIIlll<=#("kM5ytX8X8Uz")then if lIIIIIlIllIIlIIlIIIlll<=#("ZrIcxhLhD")then if lIIIIIlIllIIlIIlIIIlll==#("ERXFHOL9")then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("sMg")];else local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("HF")];local IlIIllIIIIIII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]local lIlllIllllIIlII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+2];if(lIlllIllllIIlII>0)then if(IlIIllIIIIIII>IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("9Gp")];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end elseif(IlIIllIIIIIII<IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#{"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end end;elseif lIIIIIlIllIIlIIlIIIlll>#("lpuJU2moGx")then IlllIIIIlIIl[lllIllIIIll[#{"1 + 1 = 111";{194;509;736;683};}]][lllIllIIIll[#{{548;749;623;687};{30;869;764;675};{85;953;19;610};}]]=IlllIIIIlIIl[lllIllIIIll[#("BflL")]];else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("V39")];end;elseif lIIIIIlIllIIlIIlIIIlll<=#("mtykujFqN1zRo")then if lIIIIIlIllIIlIIlIIIlll==#{"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{113;68;979;835};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{739;206;628;594};{535;100;661;728};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}then local lllIllIIIll=lllIllIIIll[#("P3")]IlllIIIIlIIl[lllIllIIIll]=IlllIIIIlIIl[lllIllIIIll](IlllIIIIlIIl[lllIllIIIll+1])else local llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("5k")]IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl]=IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl](llIIlIIlIllIIIIll(IlllIIIIlIIl,llIlIIIlllIIIIlIIllIl+1,lllIllIIIll[#("jcZ")]))end;elseif lIIIIIlIllIIlIIlIIIlll>#("Xjj2fUX5ksNkxj")then if IlllIIIIlIIl[lllIllIIIll[#("io")]]then llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("e7W")];end;else do return end;end;elseif lIIIIIlIllIIlIIlIIIlll<=#("v8XJgHNONBpcDnAl30CRgE8")then if lIIIIIlIllIIlIIlIIIlll<=#("6Bg767O3k2N5ATylkGH")then if lIIIIIlIllIIlIIlIIIlll<=#("0SuSUhTt5Cm29EMPB")then if lIIIIIlIllIIlIIlIIIlll==#("SPXv1KLFVkCqGL6G")then IlllIIIIlIIl[lllIllIIIll[#("dh")]]=lllIllIIIll[#("54A")];else if not IlllIIIIlIIl[lllIllIIIll[#("kL")]]then llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("VF7")];end;end;elseif lIIIIIlIllIIlIIlIIIlll>#("ogymYnt8TPU56gSUFY")then local llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("Nc")]IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl]=IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl](llIIlIIlIllIIIIll(IlllIIIIlIIl,llIlIIIlllIIIIlIIllIl+1,lllIllIIIll[#("32K")]))else local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("xt")];local IlIIllIIIIIII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]local lIlllIllllIIlII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+2];if(lIlllIllllIIlII>0)then if(IlIIllIIIIIII>IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#{"1 + 1 = 111";{27;882;317;573};"1 + 1 = 111";}];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end elseif(IlIIllIIIIIII<IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("V2V")];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end end;elseif lIIIIIlIllIIlIIlIIIlll<=#("PF0UhpvJ1P5M5DayJcE3C")then if lIIIIIlIllIIlIIlIIIlll==#("xi50JZdUGbXf18zvq6DO")then IlllIIIIlIIl[lllIllIIIll[#("Ik")]]=IlllIIIIlIIl[lllIllIIIll[#("zZh")]][lllIllIIIll[#("kpWN")]];else local llllIlIIlIlllIlIIIlllIIl;local lIlllIllllIIlII;local llllIIIlIlIlllll;local lIIIIIlIllIIlIIlIIIlll;lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#{{936;335;961;301};{910;302;458;775};}];llllIIIlIlIlllll=IlllIIIIlIIl[lllIllIIIll[#("u6K")]];IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1]=llllIIIlIlIlllll;IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]=llllIIIlIlIlllll[lllIllIIIll[#("OdXz")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("5Q")]IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll](IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("m1")]]=lllIllIIIll[#("XgG")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("Dp")]]=#IlllIIIIlIIl[lllIllIIIll[#{{606;207;499;102};{525;231;866;306};"1 + 1 = 111";}]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("60")]]=lllIllIIIll[#("UAo")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("OE")];lIlllIllllIIlII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]llllIlIIlIlllIlIIIlllIIl=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+2];if(llllIlIIlIlllIlIIIlllIIl>0)then if(lIlllIllllIIlII>IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("UUt")];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=lIlllIllllIIlII;end elseif(lIlllIllllIIlII<IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("s4c")];else IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=lIlllIllllIIlII;end end;elseif lIIIIIlIllIIlIIlIIIlll>#("tXdZC5TiSb4zlhRYqRHGhi")then IlllIIIIlIIl[lllIllIIIll[#("tp")]]=#IlllIIIIlIIl[lllIllIIIll[#("TBn")]];else if IlllIIIIlIIl[lllIllIIIll[#("iS")]]then llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("mgV")];end;end;elseif lIIIIIlIllIIlIIlIIIlll<=#("Z0Mb9mVHBXbcv2bh3uLXa2QP0RI")then if lIIIIIlIllIIlIIlIIIlll<=#{"1 + 1 = 111";{811;572;994;353};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{554;734;523;70};"1 + 1 = 111";{570;565;472;365};{777;484;469;474};{813;282;433;844};{584;838;991;580};{75;183;506;222};{390;418;293;770};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{399;711;893;669};"1 + 1 = 111";{163;491;284;121};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}then if lIIIIIlIllIIlIIlIIIlll==#("37j7krPVrFPQ1DOcr9LP0Gye")then local lllIllIIIll=lllIllIIIll[#("z4")]IlllIIIIlIIl[lllIllIIIll]=IlllIIIIlIIl[lllIllIIIll](IlllIIIIlIIl[lllIllIIIll+1])else IlllIIIIlIIl[lllIllIIIll[#("tW")]]=IlllIIIIlIIl[lllIllIIIll[#{{316;322;79;991};{923;146;13;421};"1 + 1 = 111";}]][IlllIIIIlIIl[lllIllIIIll[#("F1pY")]]];end;elseif lIIIIIlIllIIlIIlIIIlll==#("VxLUQs8YZ9qZ2TCqkm86En2rmr")then IlllIIIIlIIl[lllIllIIIll[#("4h")]]=llllIIIlIlIlllll[lllIllIIIll[#("5RB")]];else local llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("f2")];local lIIIIIlIllIIlIIlIIIlll=IlllIIIIlIIl[lllIllIIIll[#("vIv")]];IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl+1]=lIIIIIlIllIIlIIlIIIlll;IlllIIIIlIIl[llIlIIIlllIIIIlIIllIl]=lIIIIIlIllIIlIIlIIIlll[lllIllIIIll[#("WAP1")]];end;elseif lIIIIIlIllIIlIIlIIIlll<=#("J1FxJeDA5daLmR2bDymzqjzQtzi9H")then if lIIIIIlIllIIlIIlIIIlll==#("tIyPz6uNRVAtGmjLWpMlA493xADZ")then IlllIIIIlIIl[lllIllIIIll[#("ym")]]=#IlllIIIIlIIl[lllIllIIIll[#("2dO")]];else if not IlllIIIIlIIl[lllIllIIIll[#("q0")]]then llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("Nr6")];end;end;elseif lIIIIIlIllIIlIIlIIIlll<=#{"1 + 1 = 111";{829;880;957;263};"1 + 1 = 111";{707;536;499;274};"1 + 1 = 111";{301;64;523;156};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{166;819;845;234};{836;811;973;255};{34;854;453;153};{308;256;83;455};"1 + 1 = 111";{761;921;825;400};{214;102;97;164};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";{485;105;117;104};"1 + 1 = 111";{457;722;579;515};"1 + 1 = 111";"1 + 1 = 111";{750;711;462;593};"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}then IlllIIIIlIIl[lllIllIIIll[#("gR")]]=lllIllIIIll[#("Fnz")];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("cQ")]]=llllIIIlIlIlllll[lllIllIIIll[#("3zI")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("mT")]]=IlllIIIIlIIl[lllIllIIIll[#("3tZ")]][lllIllIIIll[#("VT9g")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("En")]]=IlllIIIIlIIl[lllIllIIIll[#("tbD")]][lllIllIIIll[#("kMcy")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];IlllIIIIlIIl[lllIllIIIll[#("f4")]]=IlllIIIIlIIl[lllIllIIIll[#{{213;630;668;646};"1 + 1 = 111";"1 + 1 = 111";}]][lllIllIIIll[#("XyAB")]];llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;lllIllIIIll=IlIIllIIIIIII[llIlIIIlllIIIIlIIllIl];if IlllIIIIlIIl[lllIllIIIll[#("QH")]]then llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;else llIlIIIlllIIIIlIIllIl=lllIllIIIll[#{"1 + 1 = 111";"1 + 1 = 111";"1 + 1 = 111";}];end;elseif lIIIIIlIllIIlIIlIIIlll==#("EGJIZ6BeCRyp6QFKnI5AXqsuHcfGyv5")then local lIIIIIlIllIIlIIlIIIlll=lllIllIIIll[#("p3")];local lIlllIllllIIlII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+2];local IlIIllIIIIIII=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]+lIlllIllllIIlII;IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll]=IlIIllIIIIIII;if(lIlllIllllIIlII>0)then if(IlIIllIIIIIII<=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("JUr")];IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end elseif(IlIIllIIIIIII>=IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+1])then llIlIIIlllIIIIlIIllIl=lllIllIIIll[#("X2J")];IlllIIIIlIIl[lIIIIIlIllIIlIIlIIIlll+3]=IlIIllIIIIIII;end else IlllIIIIlIIl[lllIllIIIll[#{{579;49;895;9};"1 + 1 = 111";}]]=IlllIIIIlIIl[lllIllIIIll[#("jgK")]][lllIllIIIll[#("nAXd")]];end;llIlIIIlllIIIIlIIllIl=llIlIIIlllIIIIlIIllIl+1;end;end);end;return lIllllIIlI(true,{},lllIlllIll())();end)(string.byte,table.insert,setmetatable);
+
+
+
+local anticrashmain = Window:NewTab("Antix")
+local anticrashsection = anticrashmain:NewSection("AntiCrash, Antiafk and more")
+
+
+
+anticrashsection:NewButton("AntiCrash", "activates anticrash", function()
+    repeat wait() until game:IsLoaded()
+
+while wait() do
+for i,v in pairs(workspace:GetDescendants()) do
+if v:IsA("SurfaceAppearance") then
+pcall(function()
+v.Parent.Parent:Destroy()
+end)
+end
+end
+end
 end)
 
+anticrashsection:NewButton("AntiFling", "funny antifling", function()
+    local Players = game:GetService("Players")
+   local RunService = game:GetService("RunService")
+   local Player = Players.LocalPlayer
 
+   RunService.Stepped:Connect(function()
+    for _, CoPlayer in pairs(Players:GetChildren()) do
+        if CoPlayer ~= Player and CoPlayer.Character then
+            for _, Part in pairs(CoPlayer.Character:GetChildren()) do
+                if Part.Name == "HumanoidRootPart" then
+                    Part.CanCollide = false
+                end
+            end
+        end
+    end
+    
+    for _, Accessory in pairs(workspace:GetChildren()) do
+        if Accessory:IsA("Accessory") and Accessory:FindFirstChildWhichIsA("Part") then
+            Accessory:FindFirstChildWhichIsA("Part"):Destroy()
+        end
+    end
+end)
+end)
 
-
-
-
-
-
+anticrashsection:NewButton("AntiAfk", "prevents you from afk", function()
+      wait(3)
+  local VirtualUser = game:service "VirtualUser"
+ game:service("Players").LocalPlayer.Idled:connect(
+    function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+end)
 
